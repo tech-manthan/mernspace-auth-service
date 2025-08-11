@@ -2,9 +2,9 @@
   "name": "service-template",
   "version": "1.0.0",
   "description": "Backend Service Template",
-  "main": "src/server.js",
+  "main": "dist/server.js",
   "scripts": {
-    "dev": "node src/server.ts",
+    "dev": "nodemon src/server.ts",
     "format:check": "npx prettier . --check",
     "format:fix": "npx prettier . --write",
     "lint:check": "npx eslint .",
@@ -23,12 +23,15 @@
   "homepage": "https://github.com/tech-manthan/backend-service-template#readme",
   "devDependencies": {
     "@eslint/js": "^9.33.0",
+    "@types/express": "^5.0.3",
     "@types/node": "^24.2.1",
     "eslint": "^9.33.0",
     "eslint-config-prettier": "^10.1.8",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.5",
+    "nodemon": "^3.1.10",
     "prettier": "3.6.2",
+    "ts-node": "^10.9.2",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.39.0"
   },
@@ -39,6 +42,7 @@
     ]
   },
   "dependencies": {
-    "dotenv": "^17.2.1"
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0"
   }
 }
