@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "node src/server.ts",
     "format:check": "npx prettier . --check",
-    "format:fix": "npx prettier . --write"
+    "format:fix": "npx prettier . --write",
+    "lint:check": "npx eslint .",
+    "lint:fix": "npx eslint . --fix"
   },
   "repository": {
     "type": "git",
@@ -19,8 +21,11 @@
   },
   "homepage": "https://github.com/tech-manthan/backend-service-template#readme",
   "devDependencies": {
+    "@eslint/js": "^9.33.0",
     "@types/node": "^24.2.1",
+    "eslint": "^9.33.0",
     "prettier": "3.6.2",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.39.0"
   }
 }
