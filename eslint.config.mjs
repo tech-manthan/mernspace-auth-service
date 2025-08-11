@@ -11,13 +11,22 @@ export default tseslint.config(
   {
     languageOptions: {
       parserOptions: {
-        projectService: true,
+        // projectService: true,
         tsconfigRootDir: import.meta.dirname,
+        project: "./tsconfig.json",
       },
     },
   },
   {
-    ignores: ["dist", "node_modules", "eslint.config.mjs"],
+    files: ["tests/**/*.ts"],
+    languageOptions: {
+      parserOptions: {
+        project: "./tsconfig.test.json",
+      },
+    },
+  },
+  {
+    ignores: ["dist", "node_modules", "eslint.config.mjs", "jest.config.js"],
   },
   {
     rules: {
