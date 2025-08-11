@@ -1,0 +1,19 @@
+{
+  "name": "service-template",
+  "version": "1.0.0",
+  "description": "Backend Service Template",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tech-manthan/backend-service-template.git"
+  },
+  "author": "Manthan Sharma <techmanthansharma@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tech-manthan/backend-service-template/issues"
+  },
+  "homepage": "https://github.com/tech-manthan/backend-service-template#readme"
+}
