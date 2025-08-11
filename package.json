@@ -4,7 +4,7 @@
   "description": "Backend Service Template",
   "main": "src/server.js",
   "scripts": {
-    "dev": "node src/server.js"
+    "dev": "node src/server.ts"
   },
   "repository": {
     "type": "git",
@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/tech-manthan/backend-service-template/issues"
   },
-  "homepage": "https://github.com/tech-manthan/backend-service-template#readme"
+  "homepage": "https://github.com/tech-manthan/backend-service-template#readme",
+  "devDependencies": {
+    "@types/node": "^24.2.1",
+    "typescript": "^5.9.2"
+  }
 }
