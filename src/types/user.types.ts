@@ -4,3 +4,13 @@ export interface UserData {
   email: string;
   password: string;
 }
+
+export interface CreateUserData extends UserData {
+  role: UserRole;
+}
+
+export enum UserRole {
+  CUSTOMER = "customer",
+  ADMIN = "admin",
+  MANAGER = "manager",
+}

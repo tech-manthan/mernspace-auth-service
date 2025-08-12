@@ -3,6 +3,7 @@ import { RegisterUserRequest } from "../types/auth.types";
 
 import { UserService } from "../services/UserService";
 import { Logger } from "winston";
+import { UserRole } from "../types/user.types";
 
 export class AuthController {
   constructor(
@@ -25,6 +26,7 @@ export class AuthController {
         lastName,
         email,
         password,
+        role: UserRole.CUSTOMER,
       });
 
       this.logger.info("User registered successfully", {

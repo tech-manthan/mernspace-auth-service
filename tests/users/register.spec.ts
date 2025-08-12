@@ -3,6 +3,7 @@ import app from "../../src/app";
 import { AppDataSource } from "../../src/utils/data-source";
 import { DataSource } from "typeorm";
 import { User } from "../../src/entity/User";
+import { UserRole } from "../../src/types/user.types";
 
 describe("POST /auth/register", () => {
   let connection: DataSource;
@@ -84,6 +85,23 @@ describe("POST /auth/register", () => {
       const users = await userRepository.find();
 
       expect((response.body as Record<string, string>).id).toBe(users[0].id);
+    });
+
+    it("should assign a customer role", async () => {
+      const userData = {
+        firstName: "Manthan",
+        lastName: "Sharma",
+        email: "manthan@gmail.com",
+        password: "secret",
+      };
+
+      await request(app).post("/auth/register").send(userData);
+
+      const userRepository = connection.getRepository(User);
+      const users = await userRepository.find();
+
+      expect(users[0]).toHaveProperty("role");
+      expect(users[0].role).toBe(UserRole.CUSTOMER);
     });
   });
 
