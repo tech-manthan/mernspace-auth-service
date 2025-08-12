@@ -1,4 +1,6 @@
 import express from "express";
+import "reflect-metadata";
+
 import { globalErrorHandler } from "./middleware/global.error.handler";
 import appRouter from "./router";
 
