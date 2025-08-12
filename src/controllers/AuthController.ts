@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { NextFunction, Response } from "express";
 import { RegisterUserRequest } from "../types/auth.types";
 
 import { UserService } from "../services/UserService";
@@ -10,15 +10,33 @@ export class AuthController {
     private logger: Logger,
   ) {}
 
-  async register(req: RegisterUserRequest, res: Response) {
-    const { firstName, lastName, email, password } = req.body;
+  async register(req: RegisterUserRequest, res: Response, next: NextFunction) {
+    try {
+      const { firstName, lastName, email, password } = req.body;
+      this.logger.debug("New request to register a user", {
+        firstName,
+        lastName,
+        email,
+        password: "******",
+      });
 
-    await this.userService.create({
-      firstName,
-      lastName,
-      email,
-      password,
-    });
-    res.status(201).json();
+      const user = await this.userService.create({
+        firstName,
+        lastName,
+        email,
+        password,
+      });
+
+      this.logger.info("User registered successfully", {
+        id: user.id,
+        email: user.email,
+      });
+      res.status(201).json({
+        id: user.id,
+      });
+    } catch (err) {
+      next(err);
+      return;
+    }
   }
 }
