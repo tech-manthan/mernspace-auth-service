@@ -70,7 +70,7 @@ describe("POST /auth/register", () => {
       expect(users[0].email).toBe(userData.email);
     });
 
-    it.skip("should persist user in the database", async () => {
+    it("should return an id of the created user", async () => {
       const userData = {
         firstName: "Manthan",
         lastName: "Sharma",
@@ -78,15 +78,12 @@ describe("POST /auth/register", () => {
         password: "secret",
       };
 
-      await request(app).post("/auth/register").send(userData);
+      const response = await request(app).post("/auth/register").send(userData);
 
       const userRepository = connection.getRepository(User);
       const users = await userRepository.find();
 
-      expect(users).toHaveLength(1);
-      expect(users[0].firstName).toBe(userData.firstName);
-      expect(users[0].lastName).toBe(userData.lastName);
-      expect(users[0].email).toBe(userData.email);
+      expect((response.body as Record<string, string>).id).toBe(users[0].id);
     });
   });
 
