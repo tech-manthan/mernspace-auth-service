@@ -4,6 +4,12 @@ import { AppDataSource } from "../../src/utils/data-source";
 import { DataSource } from "typeorm";
 import { User } from "../../src/entity/User";
 import { UserRole } from "../../src/types/user.types";
+import { isJwt } from "../utils";
+import { Token } from "../../src/entity/Token";
+
+interface Headers {
+  ["set-cookie"]: string[];
+}
 
 describe("POST /auth/register", () => {
   let connection: DataSource;
@@ -139,6 +145,67 @@ describe("POST /auth/register", () => {
 
       expect(response.statusCode).toBe(400);
       expect(users).toHaveLength(1);
+    });
+
+    it("should return the access token & refresh token inside a cookie", async () => {
+      const userData = {
+        firstName: "Manthan",
+        lastName: "Sharma",
+        email: "manthan@gmail.com",
+        password: "Password@123",
+      };
+
+      const response = await request(app).post("/auth/register").send(userData);
+
+      const cookies =
+        (response.headers as unknown as Headers)["set-cookie"] || [];
+      let accessToken: string | null = null;
+      let refreshToken: string | null = null;
+
+      cookies.forEach((cookie) => {
+        if (cookie.startsWith("accessToken=")) {
+          accessToken = cookie.split(";")[0].split("=")[1];
+        }
+        if (cookie.startsWith("refreshToken=")) {
+          refreshToken = cookie.split(";")[0].split("=")[1];
+        }
+      });
+
+      expect(accessToken).not.toBeNull();
+      expect(refreshToken).not.toBeNull();
+
+      expect(isJwt(accessToken)).toBeTruthy();
+      expect(isJwt(refreshToken)).toBeTruthy();
+    });
+
+    it("should store refresh token in database", async () => {
+      const userData = {
+        firstName: "Manthan",
+        lastName: "Sharma",
+        email: "manthan@gmail.com",
+        password: "Password@123",
+      };
+
+      const response = await request(app).post("/auth/register").send(userData);
+
+      const tokenRepository = connection.getRepository(Token);
+
+      // const tokens = await tokenRepository.find({
+      //   where: {
+      //     user: {
+      //       id: (response.body as Record<string, number>).id,
+      //     },
+      //   },
+      // });
+
+      const tokens = await tokenRepository
+        .createQueryBuilder("token")
+        .where("token.userId = :userId", {
+          userId: (response.body as Record<string, number>).id,
+        })
+        .getMany();
+
+      expect(tokens).toHaveLength(1);
     });
   });
 

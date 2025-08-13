@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from "typeorm";
 import { UserRole } from "../types/user.types";
 
 @Entity()
@@ -22,4 +29,13 @@ export class User {
 
   @Column({ type: "enum", enum: UserRole, default: UserRole.CUSTOMER })
   role: UserRole;
+
+  @CreateDateColumn({})
+  createdAt: Date;
+
+  @UpdateDateColumn({})
+  updatedAt: Date;
+
+  @DeleteDateColumn({})
+  deletedAt: Date;
 }
