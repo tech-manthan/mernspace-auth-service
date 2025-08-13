@@ -4,10 +4,12 @@ import { RegisterUserRequest } from "../types/auth.types";
 import { UserService } from "../services/UserService";
 import { Logger } from "winston";
 import { UserRole } from "../types/user.types";
+import { PasswordService } from "../services/PasswordService";
 
 export class AuthController {
   constructor(
     private userService: UserService,
+    private passwordService: PasswordService,
     private logger: Logger,
   ) {}
 
@@ -21,11 +23,13 @@ export class AuthController {
         password: "******",
       });
 
+      const hashedPassword = await this.passwordService.hash(password);
+
       const user = await this.userService.create({
         firstName,
         lastName,
         email,
-        password,
+        password: hashedPassword,
         role: UserRole.CUSTOMER,
       });
 

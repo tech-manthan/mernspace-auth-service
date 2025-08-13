@@ -27,6 +27,7 @@
   "homepage": "https://github.com/tech-manthan/backend-service-template#readme",
   "devDependencies": {
     "@eslint/js": "^9.33.0",
+    "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.3",
     "@types/http-errors": "^2.0.5",
     "@types/jest": "^30.0.0",
@@ -51,6 +52,7 @@
   },
   "dependencies": {
     "@types/supertest": "^6.0.3",
+    "bcrypt": "^6.0.0",
     "cross-env": "^10.0.0",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
