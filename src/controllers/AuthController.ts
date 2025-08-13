@@ -5,6 +5,7 @@ import { UserService } from "../services/UserService";
 import { Logger } from "winston";
 import { UserRole } from "../types/user.types";
 import { PasswordService } from "../services/PasswordService";
+import createHttpError from "http-errors";
 
 export class AuthController {
   constructor(
@@ -22,6 +23,14 @@ export class AuthController {
         email,
         password: "******",
       });
+
+      const foundUser = await this.userService.findUserByEmail(email);
+
+      if (foundUser) {
+        const err = createHttpError(400, "User already registerd, try login");
+        next(err);
+        return;
+      }
 
       const hashedPassword = await this.passwordService.hash(password);
 
