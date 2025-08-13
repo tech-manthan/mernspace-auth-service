@@ -14,6 +14,61 @@ export default checkSchema(
         errorMessage: "Email is invalid",
       },
     },
+    firstName: {
+      trim: true,
+      notEmpty: {
+        bail: true,
+        errorMessage: "FirstName is required",
+      },
+      isLength: {
+        options: {
+          min: 3,
+        },
+        bail: true,
+        errorMessage: "FirstName atleast have 2 characters",
+      },
+    },
+    lastName: {
+      trim: true,
+      notEmpty: {
+        bail: true,
+        errorMessage: "LastName is required",
+      },
+      isLength: {
+        options: {
+          min: 2,
+        },
+        bail: true,
+        errorMessage: "LastName atleast have 2 characters",
+      },
+    },
+    password: {
+      trim: true,
+      notEmpty: {
+        bail: true,
+        errorMessage: "Password is required",
+      },
+      isLength: {
+        options: {
+          min: 8,
+        },
+        bail: true,
+        errorMessage: "Password  atleast have 8 characters",
+      },
+      isStrongPassword: {
+        options: {
+          minLength: 8,
+          minLowercase: 1,
+          minUppercase: 1,
+          minNumbers: 1,
+          minSymbols: 1,
+        },
+        bail: true,
+        errorMessage:
+          "Password must have one lowercase, one uppercase, one number, one symbol",
+      },
+    },
   },
+
   ["body"],
 );
