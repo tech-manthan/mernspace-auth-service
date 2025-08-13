@@ -36,7 +36,9 @@ export class AuthController {
         password: "******",
       });
 
-      const foundUser = await this.userService.findUserByEmail(email);
+      const foundUser = await this.userService.findUserByEmail({
+        email,
+      });
 
       if (foundUser) {
         const err = createHttpError(400, "User already registerd, try login");

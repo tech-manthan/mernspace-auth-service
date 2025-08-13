@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
 import { User } from "../entity/User";
-import { CreateUserData } from "../types/user.types";
+import { CreateUserData, FindUserByEmail } from "../types/user.types";
 import createHttpError from "http-errors";
 
 export class UserService {
@@ -24,11 +24,22 @@ export class UserService {
     }
   }
 
-  async findUserByEmail(email: string) {
+  async findUserByEmail({ email, hasPassword = false }: FindUserByEmail) {
     try {
       return await this.userRepository.findOne({
         where: {
           email,
+        },
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          role: true,
+          createdAt: true,
+          updatedAt: true,
+          deletedAt: true,
+          password: hasPassword,
         },
       });
     } catch {

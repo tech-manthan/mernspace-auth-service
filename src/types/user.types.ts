@@ -9,6 +9,11 @@ export interface CreateUserData extends UserData {
   role: UserRole;
 }
 
+export interface FindUserByEmail {
+  email: string;
+  hasPassword?: boolean;
+}
+
 export enum UserRole {
   CUSTOMER = "customer",
   ADMIN = "admin",
