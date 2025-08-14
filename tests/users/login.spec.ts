@@ -3,8 +3,9 @@ import app from "../../src/app";
 import { AppDataSource } from "../../src/utils/data-source";
 import { DataSource } from "typeorm";
 import { User } from "../../src/entity/User";
-import { isJwt } from "../utils";
+import { hashPassword, isJwt } from "../utils";
 import { Token } from "../../src/entity/Token";
+import { UserRole } from "../../src/types/user.types";
 
 interface Headers {
   ["set-cookie"]: string[];
@@ -21,14 +22,19 @@ describe("POST /auth/login", () => {
     await connection.dropDatabase();
     await connection.synchronize();
 
+    const hashedPassword = await hashPassword("Password@123");
     const userData = {
       firstName: "Manthan",
       lastName: "Sharma",
       email: "manthan@gmail.com",
-      password: "Password@123",
+      password: hashedPassword,
     };
 
-    await request(app).post("/auth/register").send(userData);
+    const userRepository = connection.getRepository(User);
+    await userRepository.save({
+      ...userData,
+      role: UserRole.CUSTOMER,
+    });
   });
 
   afterAll(async () => {
@@ -144,7 +150,7 @@ describe("POST /auth/login", () => {
         },
       });
 
-      expect(tokens).toHaveLength(2);
+      expect(tokens).toHaveLength(1);
     });
   });
 

@@ -1,4 +1,5 @@
 import { Request } from "express";
+import { UserRole } from "./user.types";
 
 export interface RegisterUserData {
   firstName: string;
@@ -19,3 +20,16 @@ export interface RegisterUserRequest extends Request {
 export interface LoginUserRequest extends Request {
   body: LoginUserData;
 }
+
+export interface AuthRequest extends Request {
+  auth: {
+    id: number;
+    role: UserRole;
+    refreshTokenId: number;
+  };
+}
+
+export type AuthCookie = {
+  accessToken: string;
+  refreshToken: string;
+};

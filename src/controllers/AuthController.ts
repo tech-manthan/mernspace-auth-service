@@ -1,5 +1,9 @@
 import { NextFunction, Response } from "express";
-import { LoginUserRequest, RegisterUserRequest } from "../types/auth.types";
+import {
+  AuthRequest,
+  LoginUserRequest,
+  RegisterUserRequest,
+} from "../types/auth.types";
 
 import { UserService } from "../services/UserService";
 import { Logger } from "winston";
@@ -58,6 +62,7 @@ export class AuthController {
 
       const accessToken = this.tokenService.generateAccessToken({
         sub: String(user.id),
+        id: user.id,
         role: user.role,
       });
 
@@ -66,8 +71,9 @@ export class AuthController {
       });
 
       const refreshToken = this.tokenService.generateRefreshToken({
-        sub: String(createdRefreshToken.id),
-        userId: user.id,
+        id: user.id,
+        sub: String(user.id),
+        refreshTokenId: createdRefreshToken.id,
         role: user.role,
       });
 
@@ -140,6 +146,7 @@ export class AuthController {
 
       const accessToken = this.tokenService.generateAccessToken({
         sub: String(user.id),
+        id: user.id,
         role: user.role,
       });
 
@@ -148,8 +155,9 @@ export class AuthController {
       });
 
       const refreshToken = this.tokenService.generateRefreshToken({
-        sub: String(createdRefreshToken.id),
-        userId: user.id,
+        sub: String(user.id),
+        id: user.id,
+        refreshTokenId: createdRefreshToken.id,
         role: user.role,
       });
 
@@ -175,6 +183,25 @@ export class AuthController {
       res.status(200).json({
         id: user.id,
       });
+    } catch (err) {
+      next(err);
+      return;
+    }
+  }
+
+  async self(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const user = await this.userService.findUserById({
+        id: req.auth.id,
+      });
+
+      if (!user) {
+        const err = createHttpError(401, "Invalid accessToken");
+        next(err);
+        return;
+      }
+
+      res.status(200).json(user);
     } catch (err) {
       next(err);
       return;

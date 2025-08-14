@@ -11,6 +11,11 @@ export interface FindUserByEmail {
   hasPassword?: boolean;
 }
 
+export interface FindUserById {
+  id: number;
+  hasPassword?: boolean;
+}
+
 export enum UserRole {
   CUSTOMER = "customer",
   ADMIN = "admin",

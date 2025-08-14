@@ -17,7 +17,6 @@ import {
 
 export class TokenService {
   private privateKey: Buffer;
-  private publicKey: Buffer;
 
   /**
    * AccessTokenExpiry  -> In Seconds
@@ -36,9 +35,9 @@ export class TokenService {
       this.privateKey = fs.readFileSync(
         path.join(__dirname, "../../certs/private.pem"),
       );
-      this.publicKey = fs.readFileSync(
-        path.join(__dirname, "../../certs/public.pem"),
-      );
+      // this.publicKey = fs.readFileSync(
+      //   path.join(__dirname, "../../certs/public.pem"),
+      // );
     } catch {
       logger.error("Failed to read keys");
       process.exit(1);
@@ -53,8 +52,8 @@ export class TokenService {
     });
   }
 
-  validateAccessToken(accessToken: string): AccessTokenPayload {
-    const decodedToken = verify(accessToken, this.publicKey);
+  static validateAccessToken(accessToken: string): AccessTokenPayload {
+    const decodedToken = verify(accessToken, "publicKey");
 
     if (typeof decodedToken === "string") {
       const err = createHttpError(403, "Invalid access token");

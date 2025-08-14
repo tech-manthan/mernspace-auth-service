@@ -1,6 +1,10 @@
 import { Repository } from "typeorm";
 import { User } from "../entity/User";
-import { CreateUserData, FindUserByEmail } from "../types/user.types";
+import {
+  CreateUserData,
+  FindUserByEmail,
+  FindUserById,
+} from "../types/user.types";
 import createHttpError from "http-errors";
 
 export class UserService {
@@ -29,6 +33,33 @@ export class UserService {
       return await this.userRepository.findOne({
         where: {
           email,
+        },
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          role: true,
+          createdAt: true,
+          updatedAt: true,
+          deletedAt: true,
+          password: hasPassword,
+        },
+      });
+    } catch {
+      const error = createHttpError(
+        500,
+        "Failed to fetch user from the database",
+      );
+      throw error;
+    }
+  }
+
+  async findUserById({ id, hasPassword = false }: FindUserById) {
+    try {
+      return await this.userRepository.findOne({
+        where: {
+          id,
         },
         select: {
           id: true,

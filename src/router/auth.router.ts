@@ -9,6 +9,8 @@ import registerValidator from "../validators/register.validator";
 import { TokenService } from "../services/TokenService";
 import { Token } from "../entity/Token";
 import loginValidator from "../validators/login.validator";
+import { AuthRequest } from "../types/auth.types";
+import authenticate from "../middleware/authenticate";
 
 const authRouter = Router();
 
@@ -39,6 +41,14 @@ authRouter.post(
   loginValidator,
   async (req: Request, res: Response, next: NextFunction) => {
     await authController.login(req, res, next);
+  },
+);
+
+authRouter.get(
+  "/self",
+  authenticate,
+  async (req: Request, res: Response, next: NextFunction) => {
+    await authController.self(req as AuthRequest, res, next);
   },
 );
 

@@ -1,4 +1,5 @@
 import express from "express";
+import cookieParser from "cookie-parser";
 import "reflect-metadata";
 
 import { globalErrorHandler } from "./middleware/global.error.handler";
@@ -12,6 +13,12 @@ app.use(
   }),
 );
 app.use(express.json());
+app.use(cookieParser());
+app.use(
+  express.static("public", {
+    dotfiles: "allow",
+  }),
+);
 
 app.get("/", (req, res) => {
   res.send("Welcome to Backend Service Template");

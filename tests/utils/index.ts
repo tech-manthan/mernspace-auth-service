@@ -1,3 +1,5 @@
+import bcrypt from "bcrypt";
+import { Config } from "../../src/config";
 export const isJwt = (token: string | null): boolean => {
   if (!token) {
     return false;
@@ -17,4 +19,11 @@ export const isJwt = (token: string | null): boolean => {
   } catch {
     return false;
   }
+};
+
+export const hashPassword = async (password: string) => {
+  return await bcrypt.hash(
+    password,
+    parseInt(Config.SALT || "10") || Config.SALT || 10,
+  );
 };
