@@ -1,5 +1,5 @@
 import { NextFunction, Response } from "express";
-import { RegisterUserRequest } from "../types/auth.types";
+import { LoginUserRequest, RegisterUserRequest } from "../types/auth.types";
 
 import { UserService } from "../services/UserService";
 import { Logger } from "winston";
@@ -56,10 +56,87 @@ export class AuthController {
         role: UserRole.CUSTOMER,
       });
 
+      const accessToken = this.tokenService.generateAccessToken({
+        sub: String(user.id),
+        role: user.role,
+      });
+
+      const createdRefreshToken = await this.tokenService.createRefreshToken({
+        userId: user.id,
+      });
+
+      const refreshToken = this.tokenService.generateRefreshToken({
+        sub: String(createdRefreshToken.id),
+        userId: user.id,
+        role: user.role,
+      });
+
+      res.cookie("accessToken", accessToken, {
+        domain: "localhost",
+        sameSite: "strict",
+        maxAge: this.tokenService.AccessTokenExpiry * 1000,
+        httpOnly: true,
+      });
+
+      res.cookie("refreshToken", refreshToken, {
+        domain: "localhost",
+        sameSite: "strict",
+        maxAge: this.tokenService.RefreshTokenExpiry * 1000,
+        httpOnly: true,
+      });
+
       this.logger.info("User registered successfully", {
         id: user.id,
         email: user.email,
       });
+
+      res.status(201).json({
+        id: user.id,
+      });
+    } catch (err) {
+      next(err);
+      return;
+    }
+  }
+
+  async login(req: LoginUserRequest, res: Response, next: NextFunction) {
+    try {
+      const result = validationResult(req);
+
+      if (!result.isEmpty()) {
+        res.status(400).json({
+          errors: result.array(),
+        });
+        return;
+      }
+
+      const { email, password } = req.body;
+      this.logger.debug("New request to login a user", {
+        email,
+        password: "******",
+      });
+
+      const user = await this.userService.findUserByEmail({
+        email,
+        hasPassword: true,
+      });
+
+      if (!user) {
+        const err = createHttpError(401, "Invalid email or password");
+        next(err);
+        return;
+      }
+
+      const isValidPassword = await this.passwordService.compare(
+        password,
+        user.password,
+      );
+
+      if (!isValidPassword) {
+        const err = createHttpError(401, "Invalid email or password");
+        next(err);
+        return;
+      }
 
       const accessToken = this.tokenService.generateAccessToken({
         sub: String(user.id),
@@ -90,7 +167,12 @@ export class AuthController {
         httpOnly: true,
       });
 
-      res.status(201).json({
+      this.logger.info("User logged in successfully", {
+        id: user.id,
+        email: user.email,
+      });
+
+      res.status(200).json({
         id: user.id,
       });
     } catch (err) {

@@ -1,11 +1,8 @@
-export interface UserData {
+export interface CreateUserData {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
-}
-
-export interface CreateUserData extends UserData {
   role: UserRole;
 }
 
