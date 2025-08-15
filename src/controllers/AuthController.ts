@@ -207,4 +207,56 @@ export class AuthController {
       return;
     }
   }
+
+  async refresh(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const { refreshTokenId, id, role } = req.auth;
+
+      await this.tokenService.deleteRefreshToken({
+        tokenId: refreshTokenId,
+      });
+
+      const accessToken = this.tokenService.generateAccessToken({
+        sub: String(id),
+        id: id,
+        role: role,
+      });
+
+      const createdRefreshToken = await this.tokenService.createRefreshToken({
+        userId: id,
+      });
+
+      const refreshToken = this.tokenService.generateRefreshToken({
+        sub: String(id),
+        id: id,
+        refreshTokenId: createdRefreshToken.id,
+        role: role,
+      });
+
+      res.cookie("accessToken", accessToken, {
+        domain: "localhost",
+        sameSite: "strict",
+        maxAge: this.tokenService.AccessTokenExpiry * 1000,
+        httpOnly: true,
+      });
+
+      res.cookie("refreshToken", refreshToken, {
+        domain: "localhost",
+        sameSite: "strict",
+        maxAge: this.tokenService.RefreshTokenExpiry * 1000,
+        httpOnly: true,
+      });
+
+      this.logger.info("User tokens refreshed successfully", {
+        id: id,
+      });
+
+      res.status(200).json({
+        id: id,
+      });
+    } catch (err) {
+      next(err);
+      return;
+    }
+  }
 }

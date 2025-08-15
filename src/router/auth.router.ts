@@ -11,6 +11,7 @@ import { Token } from "../entity/Token";
 import loginValidator from "../validators/login.validator";
 import { AuthRequest } from "../types/auth.types";
 import authenticate from "../middleware/authenticate";
+import validateRefreshToken from "../middleware/validate.refresh.token";
 
 const authRouter = Router();
 
@@ -49,6 +50,14 @@ authRouter.get(
   authenticate,
   async (req: Request, res: Response, next: NextFunction) => {
     await authController.self(req as AuthRequest, res, next);
+  },
+);
+
+authRouter.post(
+  "/refresh",
+  validateRefreshToken,
+  async (req: Request, res: Response, next: NextFunction) => {
+    await authController.refresh(req as AuthRequest, res, next);
   },
 );
 
