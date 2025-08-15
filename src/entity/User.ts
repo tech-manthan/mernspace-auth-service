@@ -3,10 +3,12 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { UserRole } from "../types/user.types";
+import { Tenant } from "./Tenant";
 
 @Entity({
   name: "users",
@@ -31,6 +33,9 @@ export class User {
 
   @Column({ type: "enum", enum: UserRole, default: UserRole.CUSTOMER })
   role: UserRole;
+
+  @ManyToOne(() => Tenant, { onDelete: "SET NULL" })
+  tenant: Tenant;
 
   @CreateDateColumn({})
   createdAt: Date;
