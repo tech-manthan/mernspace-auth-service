@@ -25,35 +25,44 @@ export class AuthController {
   private async generateAndSetCookies(
     { id, role }: GenerateTokenData,
     res: Response,
+    isNull: boolean = false,
   ) {
-    const accessToken = this.tokenService.generateAccessToken({
-      sub: String(id),
-      id: id,
-      role: role,
-    });
+    let accessToken: string;
+    let refreshToken: string;
 
-    const createdRefreshToken = await this.tokenService.createRefreshToken({
-      userId: id,
-    });
+    if (isNull) {
+      accessToken = "";
+      refreshToken = "";
+    } else {
+      accessToken = this.tokenService.generateAccessToken({
+        sub: String(id),
+        id: id,
+        role: role,
+      });
 
-    const refreshToken = this.tokenService.generateRefreshToken({
-      id: id,
-      sub: String(id),
-      refreshTokenId: createdRefreshToken.id,
-      role: role,
-    });
+      const createdRefreshToken = await this.tokenService.createRefreshToken({
+        userId: id,
+      });
+
+      refreshToken = this.tokenService.generateRefreshToken({
+        id: id,
+        sub: String(id),
+        refreshTokenId: createdRefreshToken.id,
+        role: role,
+      });
+    }
 
     res.cookie("accessToken", accessToken, {
       domain: "localhost",
       sameSite: "strict",
-      maxAge: this.tokenService.AccessTokenExpiry * 1000,
+      maxAge: isNull ? -1000 : this.tokenService.AccessTokenExpiry * 1000,
       httpOnly: true,
     });
 
     res.cookie("refreshToken", refreshToken, {
       domain: "localhost",
       sameSite: "strict",
-      maxAge: this.tokenService.RefreshTokenExpiry * 1000,
+      maxAge: isNull ? -1000 : this.tokenService.RefreshTokenExpiry * 1000,
       httpOnly: true,
     });
   }
@@ -216,6 +225,36 @@ export class AuthController {
       );
 
       this.logger.info("User tokens refreshed successfully", {
+        id: id,
+      });
+
+      res.status(200).json({
+        id: id,
+      });
+    } catch (err) {
+      next(err);
+      return;
+    }
+  }
+
+  async logout(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const { refreshTokenId, id, role } = req.auth;
+
+      await this.tokenService.deleteRefreshToken({
+        tokenId: refreshTokenId,
+      });
+
+      await this.generateAndSetCookies(
+        {
+          id: id,
+          role: role,
+        },
+        res,
+        true,
+      );
+
+      this.logger.info("User logged out successfully", {
         id: id,
       });
 

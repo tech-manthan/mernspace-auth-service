@@ -15,7 +15,7 @@ interface Headers {
   ["set-cookie"]: string[];
 }
 
-describe("POST /auth/refresh", () => {
+describe("POST /auth/logout", () => {
   let connection: DataSource;
   let jwks: JWKSMock;
   let stopJwks: () => void;
@@ -69,7 +69,6 @@ describe("POST /auth/refresh", () => {
         sub: String(user.id),
         id: user.id,
         role: user.role,
-        exp: -1000,
       });
       const refreshToken = sign(
         {
@@ -86,21 +85,21 @@ describe("POST /auth/refresh", () => {
       );
 
       const response = await request(app)
-        .post("/auth/refresh")
+        .post("/auth/logout")
         .set("Cookie", [
           `accessToken=${accessToken};`,
           `refreshToken=${refreshToken}`,
         ])
         .send();
+
       expect(response.statusCode).toBe(200);
     });
 
-    it("should return the new access token & new refresh token inside a cookie", async () => {
+    it("should return the empty access token & new refresh token inside a cookie", async () => {
       const accessToken = jwks.token({
         sub: String(user.id),
         id: user.id,
         role: user.role,
-        exp: -1000,
       });
       const refreshToken = sign(
         {
@@ -117,7 +116,7 @@ describe("POST /auth/refresh", () => {
       );
 
       const response = await request(app)
-        .post("/auth/refresh")
+        .post("/auth/logout")
         .set("Cookie", [
           `accessToken=${accessToken};`,
           `refreshToken=${refreshToken}`,
@@ -138,21 +137,18 @@ describe("POST /auth/refresh", () => {
         }
       });
 
-      expect(newAccessToken).not.toBeNull();
-      expect(newRefreshToken).not.toBeNull();
-      expect(newAccessToken).not.toBe(accessToken);
-      expect(newRefreshToken).not.toBe(refreshToken);
+      expect(newAccessToken).toBe("");
+      expect(newRefreshToken).toBe("");
 
-      expect(isJwt(newAccessToken)).toBeTruthy();
-      expect(isJwt(newRefreshToken)).toBeTruthy();
+      expect(isJwt(newAccessToken)).toBeFalsy();
+      expect(isJwt(newRefreshToken)).toBeFalsy();
     });
 
-    it("should store refresh token in database", async () => {
+    it("should delete refresh token from database", async () => {
       const accessToken = jwks.token({
         sub: String(user.id),
         id: user.id,
         role: user.role,
-        exp: -1000,
       });
       const refreshToken = sign(
         {
@@ -169,7 +165,7 @@ describe("POST /auth/refresh", () => {
       );
 
       const response = await request(app)
-        .post("/auth/refresh")
+        .post("/auth/logout")
         .set("Cookie", [
           `accessToken=${accessToken};`,
           `refreshToken=${refreshToken}`,
@@ -186,10 +182,10 @@ describe("POST /auth/refresh", () => {
         },
       });
 
-      expect(tokens).toHaveLength(1);
+      expect(tokens).toHaveLength(0);
     });
 
-    it("should  return 401 status code if refresh token does not exist or invalid", async () => {
+    it("should  return 401 status code if access token does not exist or invalid", async () => {
       const accessToken = jwks.token({
         sub: String(user.id),
         id: user.id,
@@ -211,7 +207,7 @@ describe("POST /auth/refresh", () => {
       );
 
       const response = await request(app)
-        .post("/auth/refresh")
+        .post("/auth/logout")
         .set("Cookie", [
           `accessToken=${accessToken};`,
           `refreshToken=${refreshToken}`,
