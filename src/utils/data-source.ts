@@ -6,14 +6,14 @@ import { Token } from "../entity/Token";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
-  host: Config.DB_HOST!,
+  host: Config.DB_HOST ?? "localhost",
   port: Number(Config.DB_PORT),
-  username: Config.DB_USERNAME!,
-  password: Config.DB_PASSWORD!,
-  database: Config.DB_NAME!,
+  username: Config.DB_USERNAME ?? "",
+  password: Config.DB_PASSWORD ?? "",
+  database: Config.DB_NAME ?? "",
   synchronize: false,
   logging: false,
   entities: [User, Token],
-  migrations: [],
+  migrations: ["src/migration/*.ts"],
   subscribers: [],
 });
