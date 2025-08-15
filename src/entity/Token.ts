@@ -9,7 +9,9 @@ import {
 } from "typeorm";
 import { User } from "./User";
 
-@Entity()
+@Entity({
+  name: "tokens",
+})
 export class Token {
   @PrimaryGeneratedColumn()
   id: number;

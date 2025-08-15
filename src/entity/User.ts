@@ -8,7 +8,9 @@ import {
 } from "typeorm";
 import { UserRole } from "../types/user.types";
 
-@Entity()
+@Entity({
+  name: "users",
+})
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
