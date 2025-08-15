@@ -1,6 +1,11 @@
 import { JwtPayload } from "jsonwebtoken";
 import { UserRole } from "./user.types";
 
+export interface GenerateTokenData {
+  id: number;
+  role: UserRole;
+}
+
 export interface AccessTokenPayload extends JwtPayload {
   id: number;
   role: UserRole;

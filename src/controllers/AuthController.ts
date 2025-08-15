@@ -12,6 +12,7 @@ import { PasswordService } from "../services/PasswordService";
 import createHttpError from "http-errors";
 import { validationResult } from "express-validator";
 import { TokenService } from "../services/TokenService";
+import { GenerateTokenData } from "../types/token.types";
 
 export class AuthController {
   constructor(
@@ -20,6 +21,42 @@ export class AuthController {
     private tokenService: TokenService,
     private logger: Logger,
   ) {}
+
+  private async generateAndSetCookies(
+    { id, role }: GenerateTokenData,
+    res: Response,
+  ) {
+    const accessToken = this.tokenService.generateAccessToken({
+      sub: String(id),
+      id: id,
+      role: role,
+    });
+
+    const createdRefreshToken = await this.tokenService.createRefreshToken({
+      userId: id,
+    });
+
+    const refreshToken = this.tokenService.generateRefreshToken({
+      id: id,
+      sub: String(id),
+      refreshTokenId: createdRefreshToken.id,
+      role: role,
+    });
+
+    res.cookie("accessToken", accessToken, {
+      domain: "localhost",
+      sameSite: "strict",
+      maxAge: this.tokenService.AccessTokenExpiry * 1000,
+      httpOnly: true,
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      domain: "localhost",
+      sameSite: "strict",
+      maxAge: this.tokenService.RefreshTokenExpiry * 1000,
+      httpOnly: true,
+    });
+  }
 
   async register(req: RegisterUserRequest, res: Response, next: NextFunction) {
     try {
@@ -60,36 +97,13 @@ export class AuthController {
         role: UserRole.CUSTOMER,
       });
 
-      const accessToken = this.tokenService.generateAccessToken({
-        sub: String(user.id),
-        id: user.id,
-        role: user.role,
-      });
-
-      const createdRefreshToken = await this.tokenService.createRefreshToken({
-        userId: user.id,
-      });
-
-      const refreshToken = this.tokenService.generateRefreshToken({
-        id: user.id,
-        sub: String(user.id),
-        refreshTokenId: createdRefreshToken.id,
-        role: user.role,
-      });
-
-      res.cookie("accessToken", accessToken, {
-        domain: "localhost",
-        sameSite: "strict",
-        maxAge: this.tokenService.AccessTokenExpiry * 1000,
-        httpOnly: true,
-      });
-
-      res.cookie("refreshToken", refreshToken, {
-        domain: "localhost",
-        sameSite: "strict",
-        maxAge: this.tokenService.RefreshTokenExpiry * 1000,
-        httpOnly: true,
-      });
+      await this.generateAndSetCookies(
+        {
+          id: user.id,
+          role: user.role,
+        },
+        res,
+      );
 
       this.logger.info("User registered successfully", {
         id: user.id,
@@ -144,36 +158,13 @@ export class AuthController {
         return;
       }
 
-      const accessToken = this.tokenService.generateAccessToken({
-        sub: String(user.id),
-        id: user.id,
-        role: user.role,
-      });
-
-      const createdRefreshToken = await this.tokenService.createRefreshToken({
-        userId: user.id,
-      });
-
-      const refreshToken = this.tokenService.generateRefreshToken({
-        sub: String(user.id),
-        id: user.id,
-        refreshTokenId: createdRefreshToken.id,
-        role: user.role,
-      });
-
-      res.cookie("accessToken", accessToken, {
-        domain: "localhost",
-        sameSite: "strict",
-        maxAge: this.tokenService.AccessTokenExpiry * 1000,
-        httpOnly: true,
-      });
-
-      res.cookie("refreshToken", refreshToken, {
-        domain: "localhost",
-        sameSite: "strict",
-        maxAge: this.tokenService.RefreshTokenExpiry * 1000,
-        httpOnly: true,
-      });
+      await this.generateAndSetCookies(
+        {
+          id: user.id,
+          role: user.role,
+        },
+        res,
+      );
 
       this.logger.info("User logged in successfully", {
         id: user.id,
@@ -216,36 +207,13 @@ export class AuthController {
         tokenId: refreshTokenId,
       });
 
-      const accessToken = this.tokenService.generateAccessToken({
-        sub: String(id),
-        id: id,
-        role: role,
-      });
-
-      const createdRefreshToken = await this.tokenService.createRefreshToken({
-        userId: id,
-      });
-
-      const refreshToken = this.tokenService.generateRefreshToken({
-        sub: String(id),
-        id: id,
-        refreshTokenId: createdRefreshToken.id,
-        role: role,
-      });
-
-      res.cookie("accessToken", accessToken, {
-        domain: "localhost",
-        sameSite: "strict",
-        maxAge: this.tokenService.AccessTokenExpiry * 1000,
-        httpOnly: true,
-      });
-
-      res.cookie("refreshToken", refreshToken, {
-        domain: "localhost",
-        sameSite: "strict",
-        maxAge: this.tokenService.RefreshTokenExpiry * 1000,
-        httpOnly: true,
-      });
+      await this.generateAndSetCookies(
+        {
+          id: id,
+          role: role,
+        },
+        res,
+      );
 
       this.logger.info("User tokens refreshed successfully", {
         id: id,
