@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
 import { Tenant } from "../entity/Tenant";
-import { CreateTenantData } from "../types/tenant.types";
+import { CreateTenantData, TenantFilter } from "../types/tenant.types";
 import createHttpError from "http-errors";
 
 export class TenantService {
@@ -12,6 +12,30 @@ export class TenantService {
         address,
         name,
       });
+    } catch {
+      const err = createHttpError(500, "Failed to create tenant");
+      throw err;
+    }
+  }
+
+  async getAll({ currentPage, perPage, q }: TenantFilter) {
+    try {
+      const queryBuilder = this.tenantRepository.createQueryBuilder("tenant");
+
+      if (q) {
+        const searchTerm = `%${q}%`;
+        queryBuilder.where(
+          "CONCAT(tenant.name, ' ', tenant.address) ILike :q",
+          { q: searchTerm },
+        );
+      }
+      const result = await queryBuilder
+        .skip((currentPage - 1) * perPage)
+        .take(perPage)
+        .orderBy("tenant.id", "DESC")
+        .getManyAndCount();
+
+      return result;
     } catch {
       const err = createHttpError(500, "Failed to create tenant");
       throw err;

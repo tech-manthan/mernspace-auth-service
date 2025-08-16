@@ -8,3 +8,9 @@ export interface CreateTenantData {
 export interface CreateTenantRequest extends Request {
   body: CreateTenantData;
 }
+
+export interface TenantFilter {
+  q: string;
+  currentPage: number;
+  perPage: number;
+}

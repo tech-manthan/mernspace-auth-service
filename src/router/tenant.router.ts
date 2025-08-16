@@ -8,6 +8,7 @@ import logger from "../utils/logger";
 import authenticate from "../middleware/authenticate";
 import canAccess from "../middleware/can.access";
 import { UserRole } from "../types/user.types";
+import getAllTenantValidator from "../validators/tenants/get.all.tenant.validator";
 
 const tenantRouter = Router();
 
@@ -24,6 +25,14 @@ tenantRouter.post(
   canAccess([UserRole.ADMIN]),
   async (req: Request, res: Response, next: NextFunction) => {
     await tenantController.create(req, res, next);
+  },
+);
+
+tenantRouter.get(
+  "/",
+  getAllTenantValidator,
+  async (req: Request, res: Response, next: NextFunction) => {
+    await tenantController.getAll(req, res, next);
   },
 );
 
