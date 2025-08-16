@@ -2,7 +2,8 @@ import { DataSource } from "typeorm";
 import { AppDataSource } from "../../src/utils/data-source";
 import request from "supertest";
 import app from "../../src/app";
-describe("POST /tenants", () => {
+
+describe("GET /tenants", () => {
   let connection: DataSource;
 
   beforeAll(async () => {

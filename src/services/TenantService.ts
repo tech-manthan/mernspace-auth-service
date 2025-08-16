@@ -37,7 +37,20 @@ export class TenantService {
 
       return result;
     } catch {
-      const err = createHttpError(500, "Failed to create tenant");
+      const err = createHttpError(500, "Failed to get all tenants");
+      throw err;
+    }
+  }
+
+  async get(id: number) {
+    try {
+      return await this.tenantRepository.findOne({
+        where: {
+          id: id,
+        },
+      });
+    } catch {
+      const err = createHttpError(500, "Failed to fetch tenant");
       throw err;
     }
   }

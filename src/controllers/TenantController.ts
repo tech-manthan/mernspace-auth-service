@@ -3,6 +3,8 @@ import { CreateTenantRequest, TenantFilter } from "../types/tenant.types";
 import { TenantService } from "../services/TenantService";
 import { Logger } from "winston";
 import { matchedData, validationResult } from "express-validator";
+import { IdParams } from "../types/common.types";
+import createHttpError from "http-errors";
 
 export class TenantController {
   constructor(
@@ -63,6 +65,38 @@ export class TenantController {
         total: count,
         data: tenants,
       });
+    } catch (err) {
+      next(err);
+      return;
+    }
+  }
+
+  async get(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = validationResult(req);
+
+      if (!result.isEmpty()) {
+        res.status(400).json({
+          errors: result.array(),
+        });
+        return;
+      }
+
+      const { id } = matchedData<IdParams>(req, {
+        onlyValidData: true,
+      });
+
+      const tenant = await this.tenantService.get(id);
+
+      if (!tenant) {
+        const err = createHttpError(404, "Tenant not found");
+        next(err);
+        return;
+      }
+
+      this.logger.info("Tenant have been fetched");
+
+      res.status(200).json(tenant);
     } catch (err) {
       next(err);
       return;
