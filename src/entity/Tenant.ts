@@ -1,7 +1,6 @@
 import {
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -25,7 +24,4 @@ export class Tenant {
 
   @UpdateDateColumn({})
   updatedAt: Date;
-
-  @DeleteDateColumn({})
-  deletedAt: Date;
 }
