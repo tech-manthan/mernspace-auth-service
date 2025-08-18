@@ -45,4 +45,14 @@ tenantRouter.get(
   },
 );
 
+tenantRouter.delete(
+  "/:id",
+  authenticate,
+  canAccess([UserRole.ADMIN]),
+  idValidator("Tenant"),
+  async (req: Request, res: Response, next: NextFunction) => {
+    await tenantController.delete(req, res, next);
+  },
+);
+
 export default tenantRouter;

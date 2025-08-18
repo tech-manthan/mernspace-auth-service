@@ -102,4 +102,38 @@ export class TenantController {
       return;
     }
   }
+
+  async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = validationResult(req);
+
+      if (!result.isEmpty()) {
+        res.status(400).json({
+          errors: result.array(),
+        });
+        return;
+      }
+
+      const { id } = matchedData<IdParams>(req, {
+        onlyValidData: true,
+      });
+
+      const deleteRes = await this.tenantService.delete(id);
+
+      if (!deleteRes.affected || deleteRes.affected === 0) {
+        const err = createHttpError(404, "Tenant not found");
+        next(err);
+        return;
+      }
+
+      this.logger.info("Tenant have been deleted");
+
+      res.status(200).json({
+        id: id,
+      });
+    } catch (err) {
+      next(err);
+      return;
+    }
+  }
 }

@@ -54,4 +54,15 @@ export class TenantService {
       throw err;
     }
   }
+
+  async delete(id: number) {
+    try {
+      return await this.tenantRepository.delete({
+        id,
+      });
+    } catch {
+      const err = createHttpError(500, "Failed to delete tenant");
+      throw err;
+    }
+  }
 }
