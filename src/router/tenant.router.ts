@@ -10,6 +10,7 @@ import canAccess from "../middleware/can.access";
 import { UserRole } from "../types/user.types";
 import getAllTenantValidator from "../validators/tenants/get.all.tenant.validator";
 import idValidator from "../validators/common/id.validator";
+import updateTenantValidator from "../validators/tenants/update.tenant.validator";
 
 const tenantRouter = Router();
 
@@ -52,6 +53,17 @@ tenantRouter.delete(
   idValidator("Tenant"),
   async (req: Request, res: Response, next: NextFunction) => {
     await tenantController.delete(req, res, next);
+  },
+);
+
+tenantRouter.patch(
+  "/:id",
+  authenticate,
+  canAccess([UserRole.ADMIN]),
+  idValidator("Tenant"),
+  updateTenantValidator,
+  async (req: Request, res: Response, next: NextFunction) => {
+    await tenantController.update(req, res, next);
   },
 );
 

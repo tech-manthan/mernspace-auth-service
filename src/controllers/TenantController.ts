@@ -1,5 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import { CreateTenantRequest, TenantFilter } from "../types/tenant.types";
+import {
+  CreateTenantRequest,
+  TenantFilter,
+  UpdateTenantData,
+  UpdateTenantRequest,
+} from "../types/tenant.types";
 import { TenantService } from "../services/TenantService";
 import { Logger } from "winston";
 import { matchedData, validationResult } from "express-validator";
@@ -127,6 +132,47 @@ export class TenantController {
       }
 
       this.logger.info("Tenant have been deleted");
+
+      res.status(200).json({
+        id: id,
+      });
+    } catch (err) {
+      next(err);
+      return;
+    }
+  }
+
+  async update(req: UpdateTenantRequest, res: Response, next: NextFunction) {
+    try {
+      const result = validationResult(req);
+
+      if (!result.isEmpty()) {
+        res.status(400).json({
+          errors: result.array(),
+        });
+        return;
+      }
+
+      const { id } = matchedData<IdParams>(req, {
+        onlyValidData: true,
+      });
+
+      const { address, name } = matchedData<UpdateTenantData>(req, {
+        onlyValidData: true,
+      });
+
+      const updateRes = await this.tenantService.update(id, {
+        address: address ? address : "",
+        name: name ? name : "",
+      });
+
+      if (!updateRes.affected || updateRes.affected === 0) {
+        const err = createHttpError(404, "Tenant not found");
+        next(err);
+        return;
+      }
+
+      this.logger.info("Tenant have been updated");
 
       res.status(200).json({
         id: id,

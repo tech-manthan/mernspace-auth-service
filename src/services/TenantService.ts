@@ -1,6 +1,10 @@
 import { Repository } from "typeorm";
 import { Tenant } from "../entity/Tenant";
-import { CreateTenantData, TenantFilter } from "../types/tenant.types";
+import {
+  CreateTenantData,
+  TenantData,
+  TenantFilter,
+} from "../types/tenant.types";
 import createHttpError from "http-errors";
 
 export class TenantService {
@@ -62,6 +66,25 @@ export class TenantService {
       });
     } catch {
       const err = createHttpError(500, "Failed to delete tenant");
+      throw err;
+    }
+  }
+
+  async update(id: number, { address, name }: TenantData) {
+    try {
+      const updateData: Partial<TenantData> = {};
+
+      if (address !== "") {
+        updateData.address = address;
+      }
+
+      if (name !== "") {
+        updateData.name = name;
+      }
+
+      return await this.tenantRepository.update({ id }, updateData);
+    } catch {
+      const err = createHttpError(500, "Failed to update tenant");
       throw err;
     }
   }
