@@ -42,7 +42,6 @@ export class UserService {
           role: true,
           createdAt: true,
           updatedAt: true,
-          deletedAt: true,
           password: hasPassword,
         },
       });
@@ -69,7 +68,6 @@ export class UserService {
           role: true,
           createdAt: true,
           updatedAt: true,
-          deletedAt: true,
           password: hasPassword,
         },
       });
