@@ -22,9 +22,9 @@ const tenantController = new TenantController(tenantService, logger);
 
 tenantRouter.post(
   "/",
-  createTenantValidator,
   authenticate,
   canAccess([UserRole.ADMIN]),
+  createTenantValidator,
   async (req: Request, res: Response, next: NextFunction) => {
     await tenantController.create(req, res, next);
   },
@@ -40,6 +40,8 @@ tenantRouter.get(
 
 tenantRouter.get(
   "/:id",
+  authenticate,
+  canAccess([UserRole.ADMIN]),
   idValidator("Tenant"),
   async (req: Request, res: Response, next: NextFunction) => {
     await tenantController.get(req, res, next);
