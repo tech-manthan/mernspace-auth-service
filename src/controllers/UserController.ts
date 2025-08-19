@@ -2,7 +2,13 @@ import { Logger } from "winston";
 import { PasswordService } from "../services/PasswordService";
 import { UserService } from "../services/UserService";
 import { NextFunction, Request, Response } from "express";
-import { CreateUserRequest, UserFilter, UserRole } from "../types/user.types";
+import {
+  CreateUserRequest,
+  UpdateUserData,
+  UpdateUserRequest,
+  UserFilter,
+  UserRole,
+} from "../types/user.types";
 import { matchedData, validationResult } from "express-validator";
 import createHttpError from "http-errors";
 import { IdParams } from "../types/common.types";
@@ -173,6 +179,65 @@ export class UserController {
       await this.userService.delete(id);
 
       this.logger.info("User have been deleted");
+
+      res.status(200).json({
+        id: id,
+      });
+    } catch (err) {
+      next(err);
+      return;
+    }
+  }
+
+  async update(req: UpdateUserRequest, res: Response, next: NextFunction) {
+    try {
+      const result = validationResult(req);
+
+      if (!result.isEmpty()) {
+        res.status(400).json({
+          errors: result.array(),
+        });
+        return;
+      }
+
+      const { id } = matchedData<IdParams>(req, {
+        onlyValidData: true,
+      });
+
+      const { email, firstName, lastName, role, password, tenantId } =
+        matchedData<UpdateUserData>(req, {
+          onlyValidData: true,
+        });
+
+      const user = await this.userService.findUserById({ id });
+
+      if (!user) {
+        const err = createHttpError(404, "User not found");
+        next(err);
+        return;
+      }
+
+      if (user.role === UserRole.CUSTOMER) {
+        const err = createHttpError(400, "Customer can't be deleted by admin");
+        next(err);
+        return;
+      }
+
+      let hashedPassword: string = "";
+      if (password) {
+        hashedPassword = await this.passwordService.hash(password);
+      }
+
+      await this.userService.update(id, {
+        email,
+        firstName,
+        lastName,
+        password: hashedPassword,
+        role,
+        tenantId,
+      });
+
+      this.logger.info("User have been updated");
 
       res.status(200).json({
         id: id,

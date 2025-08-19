@@ -11,6 +11,7 @@ import { UserController } from "../controllers/UserController";
 import createUserValidator from "../validators/users/create.user.validator";
 import getAllUsersValidator from "../validators/users/get.all.users.validator";
 import idValidator from "../validators/common/id.validator";
+import updateUserValidator from "../validators/users/update.user.validator";
 
 const userRouter = Router();
 
@@ -58,6 +59,17 @@ userRouter.delete(
   idValidator("Tenant"),
   async (req: Request, res: Response, next: NextFunction) => {
     await userController.delete(req, res, next);
+  },
+);
+
+userRouter.patch(
+  "/:id",
+  authenticate,
+  canAccess([UserRole.ADMIN]),
+  idValidator("User"),
+  updateUserValidator,
+  async (req: Request, res: Response, next: NextFunction) => {
+    await userController.update(req, res, next);
   },
 );
 

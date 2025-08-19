@@ -33,8 +33,8 @@ export class User {
   @Column({ type: "enum", enum: UserRole, default: UserRole.CUSTOMER })
   role: UserRole;
 
-  @ManyToOne(() => Tenant, { onDelete: "SET NULL" })
-  tenant: Tenant;
+  @ManyToOne(() => Tenant, { onDelete: "SET NULL", nullable: true })
+  tenant: Tenant | null;
 
   @CreateDateColumn({})
   createdAt: Date;

@@ -8,7 +8,7 @@ import { hashPassword } from "../utils";
 import { UserRole } from "../../src/types/user.types";
 import { Tenant } from "../../src/entity/Tenant";
 
-describe("POST /tenants", () => {
+describe("PATCH /tenants/:id", () => {
   let connection: DataSource;
   let jwks: JWKSMock;
   let stopJwks: () => void;

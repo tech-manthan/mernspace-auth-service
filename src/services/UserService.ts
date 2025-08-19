@@ -4,7 +4,10 @@ import {
   CreateUserData,
   FindUserByEmail,
   FindUserById,
+  UpdateUserData,
+  UserData,
   UserFilter,
+  UserRole,
 } from "../types/user.types";
 import createHttpError from "http-errors";
 
@@ -135,6 +138,44 @@ export class UserService {
       });
     } catch {
       const err = createHttpError(500, "Failed to delete user");
+      throw err;
+    }
+  }
+
+  async update(
+    id: number,
+    { email, firstName, lastName, role, tenantId }: UpdateUserData,
+  ) {
+    try {
+      const updateData: Partial<UserData> = {};
+
+      if (firstName && firstName !== "") {
+        updateData.firstName = firstName;
+      }
+
+      if (lastName && lastName !== "") {
+        updateData.lastName = lastName;
+      }
+
+      if (email && email !== "") {
+        updateData.email = email;
+      }
+
+      if (role) {
+        updateData.role = role;
+      }
+
+      if (role === UserRole.MANAGER) {
+        updateData.tenant = {
+          id: tenantId!,
+        };
+      } else {
+        updateData.tenant = null;
+      }
+
+      return await this.userRepository.update({ id }, { ...updateData });
+    } catch {
+      const err = createHttpError(500, "Failed to update tenant");
       throw err;
     }
   }

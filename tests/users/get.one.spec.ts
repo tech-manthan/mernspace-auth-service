@@ -108,7 +108,7 @@ describe("GET /users/:id", () => {
       expect(responseData.email).toBe(user.email);
       expect(responseData.role).toBe(user.role);
       expect((responseData.tenant as Record<string, number>).id).toBe(
-        user.tenant.id,
+        user.tenant?.id,
       );
     });
 
