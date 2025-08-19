@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=dev nodemon src/server.ts",
     "build": "tsc -p tsconfig.build.json",
-    "test": "jest --watch --runInBand",
+    "test": "jest --no-cache --coverage --all --runInBand",
+    "test:watch": "jest --watch --runInBand",
     "format:check": "npx prettier . --check",
     "format:fix": "npx prettier . --write",
     "lint:check": "npx eslint .",
