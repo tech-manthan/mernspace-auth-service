@@ -5,6 +5,7 @@ import { NextFunction, Request, Response } from "express";
 import { CreateUserRequest, UserFilter, UserRole } from "../types/user.types";
 import { matchedData, validationResult } from "express-validator";
 import createHttpError from "http-errors";
+import { IdParams } from "../types/common.types";
 
 export class UserController {
   constructor(
@@ -98,6 +99,40 @@ export class UserController {
         total: count,
         data: users,
       });
+    } catch (err) {
+      next(err);
+      return;
+    }
+  }
+
+  async get(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = validationResult(req);
+
+      if (!result.isEmpty()) {
+        res.status(400).json({
+          errors: result.array(),
+        });
+        return;
+      }
+
+      const { id } = matchedData<IdParams>(req, {
+        onlyValidData: true,
+      });
+
+      const user = await this.userService.findUserById({
+        id: id,
+      });
+
+      if (!user) {
+        const err = createHttpError(404, "User not found");
+        next(err);
+        return;
+      }
+
+      this.logger.info("User have been fetched");
+
+      res.status(200).json(user);
     } catch (err) {
       next(err);
       return;

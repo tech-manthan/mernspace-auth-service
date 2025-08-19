@@ -2,17 +2,18 @@ import { DataSource } from "typeorm";
 import { AppDataSource } from "../../src/utils/data-source";
 import request from "supertest";
 import app from "../../src/app";
-import { hashPassword } from "../utils";
 import { User } from "../../src/entity/User";
-import { UserRole } from "../../src/types/user.types";
 import { JWKSMock, createJWKSMock } from "mock-jwks";
+import { hashPassword } from "../utils";
+import { UserRole } from "../../src/types/user.types";
 
-describe("GET /users", () => {
+describe("GET /users/:id", () => {
   let connection: DataSource;
   let jwks: JWKSMock;
   let stopJwks: () => void;
   let user: User;
   let accessToken: string;
+
   beforeAll(async () => {
     jwks = createJWKSMock("http://localhost:5501");
 
@@ -58,44 +59,66 @@ describe("GET /users", () => {
   describe("Given all fields", () => {
     it("should return 200 status code", async () => {
       const response = await request(app)
-        .get("/users")
+        .get(`/users/${user.id}`)
         .set("Cookie", [`accessToken=${accessToken};`])
         .send();
 
       expect(response.statusCode).toBe(200);
     });
 
-    it("should return total count,perPage,currentPage & users as data field", async () => {
+    it("should return user in response body", async () => {
       const response = await request(app)
-        .get(`/users?perPage=2&pageNumber=2&q=Mayank`)
+        .get(`/users/${user.id}`)
         .set("Cookie", [`accessToken=${accessToken};`])
         .send();
 
-      expect(response.body).toHaveProperty("total");
-      expect(response.body).toHaveProperty("perPage");
-      expect(response.body).toHaveProperty("currentPage");
-      expect(response.body).toHaveProperty("data");
-
       const responseData = response.body as Record<string, object>;
 
-      expect(Number.isInteger(responseData.total)).toBe(true);
-      expect(Number.isInteger(responseData.perPage)).toBe(true);
-      expect(Number.isInteger(responseData.currentPage)).toBe(true);
-      expect(Array.isArray(responseData.data)).toBe(true);
+      expect(responseData).toHaveProperty("id");
+      expect(responseData).toHaveProperty("firstName");
+      expect(responseData).toHaveProperty("lastName");
+      expect(responseData).toHaveProperty("email");
+      expect(responseData).toHaveProperty("role");
+
+      expect(responseData.id).toBe(user.id);
+      expect(responseData.firstName).toBe(user.firstName);
+      expect(responseData.lastName).toBe(user.lastName);
+      expect(responseData.email).toBe(user.email);
+      expect(responseData.role).toBe(user.role);
     });
 
-    it("should return 400 status code if role is invalid", async () => {
+    it("should not return password in user", async () => {
       const response = await request(app)
-        .get(`/users?perPage=2&pageNumber=2&q=Tenant&role=Role`)
+        .get(`/users/${user.id}`)
+        .set("Cookie", [`accessToken=${accessToken};`])
+        .send();
+
+      expect(response.body as Record<string, object>).not.toHaveProperty(
+        "password",
+      );
+    });
+
+    it("should return 400 status code if id is invalid", async () => {
+      const response = await request(app)
+        .get(`/users/sss`)
         .set("Cookie", [`accessToken=${accessToken};`])
         .send();
 
       expect(response.statusCode).toBe(400);
     });
 
+    it("should return 404 status code if user is not found", async () => {
+      const response = await request(app)
+        .get(`/users/4`)
+        .set("Cookie", [`accessToken=${accessToken};`])
+        .send();
+
+      expect(response.statusCode).toBe(404);
+    });
+
     it("should return 401 status code if user is not authenticated", async () => {
       const response = await request(app)
-        .get(`/users?perPage=2&pageNumber=2&q=Tenant&role=Admin`)
+        .get(`/users/${user.id}`)
         .set("Cookie", [`accessToken=${"accessToken"};`])
         .send();
 
@@ -125,7 +148,7 @@ describe("GET /users", () => {
       });
 
       const response = await request(app)
-        .get(`/users?perPage=2&pageNumber=2&q=Tenant&role=Admin`)
+        .get(`/users/${user.id}`)
         .set("Cookie", [`accessToken=${accessToken};`])
         .send();
 
