@@ -27,3 +27,10 @@ export enum UserRole {
   ADMIN = "admin",
   MANAGER = "manager",
 }
+
+export interface UserFilter {
+  q: string;
+  currentPage: number;
+  perPage: number;
+  role: UserRole;
+}

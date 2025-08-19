@@ -1,9 +1,9 @@
 import { Logger } from "winston";
 import { PasswordService } from "../services/PasswordService";
 import { UserService } from "../services/UserService";
-import { NextFunction, Response } from "express";
-import { CreateUserRequest, UserRole } from "../types/user.types";
-import { validationResult } from "express-validator";
+import { NextFunction, Request, Response } from "express";
+import { CreateUserRequest, UserFilter, UserRole } from "../types/user.types";
+import { matchedData, validationResult } from "express-validator";
 import createHttpError from "http-errors";
 
 export class UserController {
@@ -67,6 +67,36 @@ export class UserController {
 
       res.status(201).json({
         id: user.id,
+      });
+    } catch (err) {
+      next(err);
+      return;
+    }
+  }
+
+  async getAll(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = validationResult(req);
+
+      if (!result.isEmpty()) {
+        res.status(400).json({
+          errors: result.array(),
+        });
+        return;
+      }
+
+      const filter = matchedData<UserFilter>(req, {
+        onlyValidData: true,
+      });
+
+      const [users, count] = await this.userService.getAll(filter);
+      this.logger.info("All Tenants have been fetched");
+
+      res.status(200).json({
+        currentPage: filter.currentPage,
+        perPage: filter.perPage,
+        total: count,
+        data: users,
       });
     } catch (err) {
       next(err);

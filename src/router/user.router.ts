@@ -9,6 +9,7 @@ import { User } from "../entity/User";
 import { PasswordService } from "../services/PasswordService";
 import { UserController } from "../controllers/UserController";
 import createUserValidator from "../validators/users/create.user.validator";
+import getAllUsersValidator from "../validators/users/get.all.users.validator";
 
 const userRouter = Router();
 
@@ -26,6 +27,14 @@ userRouter.post(
   canAccess([UserRole.ADMIN]),
   async (req: Request, res: Response, next: NextFunction) => {
     await userController.create(req, res, next);
+  },
+);
+
+userRouter.get(
+  "/",
+  getAllUsersValidator,
+  async (req: Request, res: Response, next: NextFunction) => {
+    await userController.getAll(req, res, next);
   },
 );
 

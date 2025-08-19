@@ -1,9 +1,10 @@
-import { Repository } from "typeorm";
+import { Brackets, Repository } from "typeorm";
 import { User } from "../entity/User";
 import {
   CreateUserData,
   FindUserByEmail,
   FindUserById,
+  UserFilter,
 } from "../types/user.types";
 import createHttpError from "http-errors";
 
@@ -77,6 +78,42 @@ export class UserService {
         "Failed to fetch user from the database",
       );
       throw error;
+    }
+  }
+
+  async getAll({ currentPage, perPage, q, role }: UserFilter) {
+    try {
+      const queryBuilder = this.userRepository.createQueryBuilder("user");
+
+      if (q) {
+        const searchTerm = `%${q}%`;
+        queryBuilder.where(
+          new Brackets((qb) => {
+            qb.where("CONCAT(user.firstName, ' ', user.lastName) ILike :q", {
+              q: searchTerm,
+            }).orWhere("user.email ILike :q", { q: searchTerm });
+          }),
+        );
+      }
+
+      if (role) {
+        queryBuilder.andWhere("user.role = :role", {
+          role: role,
+        });
+      }
+
+      const result = await queryBuilder
+        .leftJoinAndSelect("user.tenant", "tenant")
+        .skip((currentPage - 1) * perPage)
+        .take(perPage)
+        .orderBy("user.id", "DESC")
+        .getManyAndCount();
+      return result;
+
+      return result;
+    } catch {
+      const err = createHttpError(500, "Failed to get all tenants");
+      throw err;
     }
   }
 }
