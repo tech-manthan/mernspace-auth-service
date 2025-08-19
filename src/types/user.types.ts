@@ -1,9 +1,15 @@
+import { Request } from "express";
+
 export interface CreateUserData {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
   role: UserRole;
+}
+
+export interface CreateUserRequest extends Request {
+  body: CreateUserData;
 }
 
 export interface FindUserByEmail {
