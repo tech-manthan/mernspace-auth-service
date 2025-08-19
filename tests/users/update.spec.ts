@@ -88,7 +88,6 @@ describe("PATCH /users/:id", () => {
         lastName: "Dahiya U",
         email: "ramanu@gmail.com",
         password: "Raman@123",
-        role: UserRole.MANAGER,
         tenantId: tenant2.id,
       };
 
@@ -156,6 +155,28 @@ describe("PATCH /users/:id", () => {
 
       expect(user?.role).toBe(UserRole.ADMIN);
       expect(user?.tenant).toBeNull();
+    });
+
+    it("should not set role to customer & return 400 status code", async () => {
+      const userData = {
+        role: UserRole.CUSTOMER,
+      };
+
+      const response = await request(app)
+        .patch(`/users/${manager.id}`)
+        .set("Cookie", [`accessToken=${accessToken};`])
+        .send(userData);
+
+      const userRepository = AppDataSource.getRepository(User);
+      const user = await userRepository.findOne({
+        where: {
+          id: manager.id,
+        },
+        relations: ["tenant"],
+      });
+
+      expect(response.statusCode).toBe(400);
+      expect(user?.role).not.toBe(userData.role);
     });
 
     it("should return id of the updated tenant", async () => {

@@ -217,8 +217,8 @@ export class UserController {
         return;
       }
 
-      if (user.role === UserRole.CUSTOMER) {
-        const err = createHttpError(400, "Customer can't be deleted by admin");
+      if (role === UserRole.CUSTOMER) {
+        const err = createHttpError(400, "Customer can't be updated by admin");
         next(err);
         return;
       }
