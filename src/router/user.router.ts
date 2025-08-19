@@ -23,9 +23,9 @@ const userController = new UserController(userService, passwordService, logger);
 
 userRouter.post(
   "/",
-  createUserValidator,
   authenticate,
   canAccess([UserRole.ADMIN]),
+  createUserValidator,
   async (req: Request, res: Response, next: NextFunction) => {
     await userController.create(req, res, next);
   },
@@ -33,9 +33,9 @@ userRouter.post(
 
 userRouter.get(
   "/",
-  getAllUsersValidator,
   authenticate,
   canAccess([UserRole.ADMIN]),
+  getAllUsersValidator,
   async (req: Request, res: Response, next: NextFunction) => {
     await userController.getAll(req, res, next);
   },
@@ -43,11 +43,21 @@ userRouter.get(
 
 userRouter.get(
   "/:id",
-  idValidator("User"),
   authenticate,
   canAccess([UserRole.ADMIN]),
+  idValidator("User"),
   async (req: Request, res: Response, next: NextFunction) => {
     await userController.get(req, res, next);
+  },
+);
+
+userRouter.delete(
+  "/:id",
+  authenticate,
+  canAccess([UserRole.ADMIN]),
+  idValidator("Tenant"),
+  async (req: Request, res: Response, next: NextFunction) => {
+    await userController.delete(req, res, next);
   },
 );
 

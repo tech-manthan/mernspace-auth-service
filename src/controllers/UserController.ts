@@ -138,4 +138,46 @@ export class UserController {
       return;
     }
   }
+
+  async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = validationResult(req);
+
+      if (!result.isEmpty()) {
+        res.status(400).json({
+          errors: result.array(),
+        });
+        return;
+      }
+
+      const { id } = matchedData<IdParams>(req, {
+        onlyValidData: true,
+      });
+
+      const user = await this.userService.findUserById({ id });
+
+      if (!user) {
+        const err = createHttpError(404, "User not found");
+        next(err);
+        return;
+      }
+
+      if (user.role === UserRole.CUSTOMER) {
+        const err = createHttpError(400, "Customer can't be deleted by admin");
+        next(err);
+        return;
+      }
+
+      await this.userService.delete(id);
+
+      this.logger.info("User have been deleted");
+
+      res.status(200).json({
+        id: id,
+      });
+    } catch (err) {
+      next(err);
+      return;
+    }
+  }
 }

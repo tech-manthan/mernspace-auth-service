@@ -112,7 +112,18 @@ export class UserService {
 
       return result;
     } catch {
-      const err = createHttpError(500, "Failed to get all tenants");
+      const err = createHttpError(500, "Failed to get all users");
+      throw err;
+    }
+  }
+
+  async delete(id: number) {
+    try {
+      return await this.userRepository.delete({
+        id,
+      });
+    } catch {
+      const err = createHttpError(500, "Failed to delete user");
       throw err;
     }
   }
