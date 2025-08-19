@@ -4,7 +4,7 @@ import { Config } from "../config";
 const logger = winston.createLogger({
   level: "info",
   defaultMeta: {
-    serviceName: "Service Template",
+    serviceName: "Auth Service",
   },
   format: winston.format.combine(
     winston.format.timestamp(),

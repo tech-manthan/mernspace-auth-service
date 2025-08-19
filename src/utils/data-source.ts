@@ -11,7 +11,7 @@ export const AppDataSource = new DataSource({
   database: Config.DB_NAME ?? "",
   synchronize: false,
   logging: false,
-  entities: ["src/entity/*.ts"],
-  migrations: ["src/migration/*.ts"],
+  entities: [__dirname + "/../entity/**/*.{ts,js}"],
+  migrations: [__dirname + "/../migration/**/*.{ts,js}"],
   subscribers: [],
 });

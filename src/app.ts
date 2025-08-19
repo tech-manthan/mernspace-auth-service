@@ -21,7 +21,7 @@ app.use(
 );
 
 app.get("/", (req, res) => {
-  res.send("Welcome to Backend Service Template");
+  res.send("Welcome to Auth Service");
 });
 
 app.use(appRouter);
