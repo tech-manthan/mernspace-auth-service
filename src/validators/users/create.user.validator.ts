@@ -79,6 +79,24 @@ export default checkSchema(
         errorMessage: `Role must be one of: ${Object.values(UserRole).join(", ")}`,
       },
     },
+    tenantId: {
+      custom: {
+        options: (value, { req }) => {
+          if (
+            (req.body as Record<string, UserRole>).role === UserRole.MANAGER
+          ) {
+            if (value === undefined || value === null) {
+              throw new Error("tenantId is required when role is MANAGER");
+            }
+            if (isNaN(Number(value))) {
+              throw new Error("tenantId must be a number");
+            }
+          }
+          return true;
+        },
+      },
+      toInt: true,
+    },
   },
 
   ["body"],

@@ -25,7 +25,7 @@ export class UserController {
         return;
       }
 
-      const { firstName, lastName, email, password, role } = req.body;
+      const { firstName, lastName, email, password, role, tenantId } = req.body;
 
       if (role === UserRole.CUSTOMER) {
         const err = createHttpError(400, "Customer can't be created by admin");
@@ -39,6 +39,7 @@ export class UserController {
         email,
         password: "******",
         role,
+        tenantId,
       });
 
       const foundUser = await this.userService.findUserByEmail({
@@ -59,6 +60,7 @@ export class UserController {
         email,
         password: hashedPassword,
         role,
+        ...(tenantId !== undefined && { tenantId: tenantId }),
       });
 
       this.logger.info("User created successfully", {

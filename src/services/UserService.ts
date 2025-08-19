@@ -11,7 +11,14 @@ import createHttpError from "http-errors";
 export class UserService {
   constructor(private userRepository: Repository<User>) {}
 
-  async create({ email, firstName, lastName, password, role }: CreateUserData) {
+  async create({
+    email,
+    firstName,
+    lastName,
+    password,
+    role,
+    tenantId,
+  }: CreateUserData) {
     try {
       return await this.userRepository.save({
         firstName,
@@ -19,6 +26,7 @@ export class UserService {
         email,
         password,
         role,
+        ...(tenantId !== undefined && { tenant: { id: tenantId } }),
       });
     } catch {
       const error = createHttpError(
@@ -41,6 +49,7 @@ export class UserService {
           firstName: true,
           lastName: true,
           role: true,
+          tenant: true,
           createdAt: true,
           updatedAt: true,
           password: hasPassword,
@@ -67,10 +76,12 @@ export class UserService {
           firstName: true,
           lastName: true,
           role: true,
+          tenant: true,
           createdAt: true,
           updatedAt: true,
           password: hasPassword,
         },
+        relations: ["tenant"],
       });
     } catch {
       const error = createHttpError(

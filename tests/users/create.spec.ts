@@ -6,13 +6,15 @@ import { JWKSMock, createJWKSMock } from "mock-jwks";
 import { User } from "../../src/entity/User";
 import { hashPassword } from "../utils";
 import { UserRole } from "../../src/types/user.types";
+import { Tenant } from "../../src/entity/Tenant";
 
-describe("POST /tenants", () => {
+describe("POST /users", () => {
   let connection: DataSource;
   let jwks: JWKSMock;
   let stopJwks: () => void;
   let adminUser: User;
   let accessToken: string;
+  let tenant: Tenant;
 
   beforeAll(async () => {
     jwks = createJWKSMock("http://localhost:5501");
@@ -45,6 +47,13 @@ describe("POST /tenants", () => {
       id: adminUser.id,
       role: adminUser.role,
     });
+
+    const tennatRepository = connection.getRepository(Tenant);
+
+    tenant = await tennatRepository.save({
+      name: "Tenant",
+      address: "Tenant Address",
+    });
   });
 
   afterEach(() => {
@@ -63,6 +72,7 @@ describe("POST /tenants", () => {
         email: "mayank@gmail.com",
         password: "Mayank@123",
         role: UserRole.MANAGER,
+        tenantId: tenant.id,
       };
 
       const response = await request(app)
@@ -80,6 +90,7 @@ describe("POST /tenants", () => {
         email: "mayank@gmail.com",
         password: "Mayank@123",
         role: UserRole.MANAGER,
+        tenantId: tenant.id,
       };
 
       const response = await request(app)
@@ -97,6 +108,7 @@ describe("POST /tenants", () => {
         email: "mayank@gmail.com",
         password: "Mayank@123",
         role: UserRole.MANAGER,
+        tenantId: tenant.id,
       };
 
       const response = await request(app)
@@ -125,6 +137,7 @@ describe("POST /tenants", () => {
         email: "mayank@gmail.com",
         password: "Mayank@123",
         role: UserRole.MANAGER,
+        tenantId: tenant.id,
       };
 
       const response = await request(app)
@@ -157,6 +170,7 @@ describe("POST /tenants", () => {
         email: "mayank@gmail.com",
         password: "Mayank@123",
         role: UserRole.MANAGER,
+        tenantId: tenant.id,
       };
 
       const userRepository = connection.getRepository(User);
@@ -201,6 +215,7 @@ describe("POST /tenants", () => {
         email: "mayank@gmail.com",
         password: "Mayank@123",
         role: UserRole.MANAGER,
+        tenantId: tenant.id,
       };
 
       const response = await request(app)
@@ -244,6 +259,7 @@ describe("POST /tenants", () => {
         email: "mayank@gmail.com",
         password: "Mayank@123",
         role: UserRole.MANAGER,
+        tenantId: tenant.id,
       };
 
       const response = await request(app)
@@ -266,6 +282,7 @@ describe("POST /tenants", () => {
         email: "",
         password: "Mayank@123",
         role: UserRole.MANAGER,
+        tenantId: tenant.id,
       };
 
       const response = await request(app)
@@ -291,6 +308,7 @@ describe("POST /tenants", () => {
         email: "mayank@gmail.com",
         password: "Mayank@123",
         role: UserRole.MANAGER,
+        tenantId: tenant.id,
       };
 
       const response = await request(app)
@@ -312,6 +330,7 @@ describe("POST /tenants", () => {
         email: "mayank@gmail.com",
         password: "Mayank@123",
         role: UserRole.MANAGER,
+        tenantId: tenant.id,
       };
 
       const response = await request(app)
@@ -333,6 +352,7 @@ describe("POST /tenants", () => {
         email: "mayank@gmail.com",
         password: "",
         role: UserRole.MANAGER,
+        tenantId: tenant.id,
       };
 
       const response = await request(app)
@@ -352,7 +372,29 @@ describe("POST /tenants", () => {
         firstName: "Mayank",
         lastName: "Sharma",
         email: "mayank@gmail.com",
-        password: "",
+        password: "Password@123",
+        tenantId: tenant.id,
+      };
+
+      const response = await request(app)
+        .post("/users")
+        .set("Cookie", [`accessToken=${accessToken};`])
+        .send(userData);
+
+      const userRepository = connection.getRepository(User);
+      const users = await userRepository.find();
+
+      expect(response.statusCode).toBe(400);
+      expect(users).toHaveLength(1);
+    });
+
+    it("should return 400 status code if tenant id is missing if role is MANAGER", async () => {
+      const userData = {
+        firstName: "Mayank",
+        lastName: "Sharma",
+        email: "mayank@gmail.com",
+        password: "Password@123",
+        role: UserRole.MANAGER,
       };
 
       const response = await request(app)
@@ -376,6 +418,7 @@ describe("POST /tenants", () => {
         email: "     mayank@gmail.com       ",
         password: "Mayank@123",
         role: UserRole.MANAGER,
+        tenantId: tenant.id,
       };
 
       const response = await request(app)
@@ -401,6 +444,7 @@ describe("POST /tenants", () => {
         email: "mayankgmail.com",
         password: "Mayank@123",
         role: UserRole.MANAGER,
+        tenantId: tenant.id,
       };
 
       const response = await request(app)
@@ -422,6 +466,7 @@ describe("POST /tenants", () => {
         email: "mayank@gmail.com",
         password: "ss",
         role: UserRole.MANAGER,
+        tenantId: tenant.id,
       };
 
       const response = await request(app)
@@ -443,6 +488,7 @@ describe("POST /tenants", () => {
         email: "mayank@gmail.com",
         password: "",
         role: UserRole.MANAGER,
+        tenantId: tenant.id,
       };
 
       const response = await request(app)
@@ -464,6 +510,29 @@ describe("POST /tenants", () => {
         email: "mayank@gmail.com",
         password: "",
         role: "Role",
+        tenantId: tenant.id,
+      };
+
+      const response = await request(app)
+        .post("/users")
+        .set("Cookie", [`accessToken=${accessToken};`])
+        .send(userData);
+
+      const userRepository = connection.getRepository(User);
+      const users = await userRepository.find();
+
+      expect(response.statusCode).toBe(400);
+      expect(users).toHaveLength(1);
+    });
+
+    it("should return 400 status code if tennat id is not valid", async () => {
+      const userData = {
+        firstName: "Mayank",
+        lastName: "Sharma",
+        email: "mayank@gmail.com",
+        password: "",
+        role: "Role",
+        tenantId: "gee",
       };
 
       const response = await request(app)
