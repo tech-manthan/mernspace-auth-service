@@ -33,11 +33,11 @@ export class UserService {
       });
     } catch (err) {
       console.log("DB ERROR", err);
-      const error = createHttpError(
-        500,
-        "Failed to store the data in the database",
-      );
-      throw error;
+      // const error = createHttpError(
+      //   500,
+      //   "Failed to store the data in the database",
+      // );
+      throw err;
     }
   }
 
