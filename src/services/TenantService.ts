@@ -8,7 +8,7 @@ import {
 import createHttpError from "http-errors";
 
 export class TenantService {
-  constructor(private tenantRepository: Repository<Tenant>) {}
+  constructor(private readonly tenantRepository: Repository<Tenant>) {}
 
   async create({ address, name }: CreateTenantData) {
     try {

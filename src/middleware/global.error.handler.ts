@@ -15,7 +15,6 @@ function globalErrorHandler() {
     const statusCode = err.status || err.statusCode || 500;
 
     const isProduction = process.env.NODE_ENV === "production";
-    /// todo: error message should be more user friendly if 400 then send to client
     let message = "Internal server error";
     if (statusCode === 400) {
       message = err.message;

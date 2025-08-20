@@ -7,13 +7,13 @@ export default checkSchema(
       trim: true,
       customSanitizer: {
         options: (value: unknown) => {
-          return value ? value : "";
+          return value || "";
         },
       },
     },
     role: {
       customSanitizer: {
-        options: (value: unknown) => (value ? value : ""),
+        options: (value: unknown) => value || "",
       },
       optional: true,
       isIn: {

@@ -11,12 +11,9 @@ const startServer = async () => {
     logger.info("Database connected successfully");
 
     app.listen(PORT, () => {
-      // console.log(`Listening on port ${PORT}`);
       logger.info("Server Listening on port", { port: PORT });
     });
   } catch (err) {
-    // console.error(err);
-
     logger.error(err);
     process.exit(1);
   }

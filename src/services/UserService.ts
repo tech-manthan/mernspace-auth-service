@@ -12,7 +12,7 @@ import {
 import createHttpError from "http-errors";
 
 export class UserService {
-  constructor(private userRepository: Repository<User>) {}
+  constructor(private readonly userRepository: Repository<User>) {}
 
   async create({
     email,
@@ -122,8 +122,6 @@ export class UserService {
         .take(perPage)
         .orderBy("user.id", "DESC")
         .getManyAndCount();
-      return result;
-
       return result;
     } catch {
       const err = createHttpError(500, "Failed to get all users");

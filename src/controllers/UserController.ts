@@ -15,9 +15,9 @@ import { IdParams } from "../types/common.types";
 
 export class UserController {
   constructor(
-    private userService: UserService,
-    private passwordService: PasswordService,
-    private logger: Logger,
+    private readonly userService: UserService,
+    private readonly passwordService: PasswordService,
+    private readonly logger: Logger,
   ) {}
 
   async create(req: CreateUserRequest, res: Response, next: NextFunction) {

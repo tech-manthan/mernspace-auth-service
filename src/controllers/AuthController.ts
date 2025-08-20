@@ -16,10 +16,10 @@ import { GenerateTokenData } from "../types/token.types";
 
 export class AuthController {
   constructor(
-    private userService: UserService,
-    private passwordService: PasswordService,
-    private tokenService: TokenService,
-    private logger: Logger,
+    private readonly userService: UserService,
+    private readonly passwordService: PasswordService,
+    private readonly tokenService: TokenService,
+    private readonly logger: Logger,
   ) {}
 
   private async generateAndSetCookies(

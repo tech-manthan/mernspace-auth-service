@@ -12,10 +12,8 @@ export default function canAccess(roles: UserRole[]) {
       logger.error("Unauthorized resource");
       const err = createHttpError(403, "Unauthorized Access");
       next(err);
-      return;
     } else {
       next();
-      return;
     }
   };
 }

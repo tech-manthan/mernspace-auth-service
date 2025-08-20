@@ -13,21 +13,21 @@ import {
 } from "../types/token.types";
 
 export class TokenService {
-  private privateKey: string;
-  private refreshTokenSecret: string;
+  private readonly privateKey: string;
+  private readonly refreshTokenSecret: string;
 
   /**
    * AccessTokenExpiry  -> In Seconds
    */
-  public AccessTokenExpiry = 60 * 60;
+  public readonly AccessTokenExpiry = 60 * 60;
   /**
    * RefreshTokenExpiry  -> In Seconds
    */
-  public RefreshTokenExpiry = 60 * 60 * 24 * 365;
+  public readonly RefreshTokenExpiry = 60 * 60 * 24 * 365;
 
   constructor(
-    private tokenRepository: Repository<Token>,
-    private logger: Logger,
+    private readonly tokenRepository: Repository<Token>,
+    private readonly logger: Logger,
   ) {
     if (!Config.PRIVATE_KEY) {
       logger.error("Failed to read keys");
