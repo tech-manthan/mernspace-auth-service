@@ -75,6 +75,8 @@ describe("GET /auth/self", () => {
         .set("Cookie", [`accessToken=${accessToken};`])
         .send();
 
+      console.log(response.body);
+
       expect((response.body as Record<string, object>).id).toBe(user.id);
     });
 
