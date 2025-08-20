@@ -31,13 +31,12 @@ export class UserService {
         role,
         ...(tenantId !== undefined && { tenant: { id: tenantId } }),
       });
-    } catch (err) {
-      console.log("DB ERROR", err);
-      // const error = createHttpError(
-      //   500,
-      //   "Failed to store the data in the database",
-      // );
-      throw err;
+    } catch {
+      const error = createHttpError(
+        500,
+        "Failed to store the data in the database",
+      );
+      throw error;
     }
   }
 

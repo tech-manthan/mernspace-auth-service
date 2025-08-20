@@ -23,23 +23,9 @@ describe("POST /auth/logout", () => {
   let token: Token;
 
   beforeAll(async () => {
-    try {
-      jwks = createJWKSMock("http://127.0.0.1:5501/");
-    } catch (error) {
-      console.log("JWKS Error aayi hai");
-      console.log(error);
-    }
+    jwks = createJWKSMock("http://localhost:5501/");
 
-    try {
-      connection = await AppDataSource.initialize();
-
-      console.log("JWKS", jwks);
-
-      console.log("connection", connection);
-    } catch (error) {
-      console.log("Database Error aayi hai");
-      console.log(error);
-    }
+    connection = await AppDataSource.initialize();
   });
 
   beforeEach(async () => {

@@ -1,9 +1,6 @@
 import app from "../src/app";
-import { Config } from "../src/config";
 import { calculateDiscount } from "../src/utils/test.example";
 import request from "supertest";
-
-console.debug("DBHOST", `${Config.DB_HOST?.length}`);
 
 describe("App", () => {
   it("should return correct discount amount", () => {
