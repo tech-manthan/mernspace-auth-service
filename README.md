@@ -8,6 +8,8 @@ Authentication Service has following features :
    - Self
    - Refresh Tokens
    - Logout
+   - Authenticate Middleware
+   - CanAccess Middleware
 
 2. Tenants
    - Create
