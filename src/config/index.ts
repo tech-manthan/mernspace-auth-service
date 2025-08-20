@@ -20,7 +20,7 @@ const {
 } = process.env;
 
 export const Config = {
-  PORT,
+  PORT: PORT || 5001,
   NODE_ENV,
   DB_HOST,
   DB_PORT,
