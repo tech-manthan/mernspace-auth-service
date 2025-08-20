@@ -25,6 +25,8 @@ describe("POST /auth/logout", () => {
   beforeAll(async () => {
     jwks = createJWKSMock("http://127.0.0.1:5501/");
     connection = await AppDataSource.initialize();
+
+    console.log("connection", connection);
   });
 
   beforeEach(async () => {
