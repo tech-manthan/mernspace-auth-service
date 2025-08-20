@@ -16,6 +16,7 @@ const {
   SALT,
   REFRESH_TOKEN_SECRET,
   JWKS_URI,
+  PRIVATE_KEY,
 } = process.env;
 
 export const Config = {
@@ -29,4 +30,5 @@ export const Config = {
   SALT,
   REFRESH_TOKEN_SECRET,
   JWKS_URI,
+  PRIVATE_KEY,
 } as const;

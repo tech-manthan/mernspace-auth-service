@@ -1,7 +1,4 @@
-import { sign, verify } from "jsonwebtoken";
-import fs from "node:fs";
-
-import path from "node:path";
+import { sign } from "jsonwebtoken";
 import { Logger } from "winston";
 import createHttpError from "http-errors";
 import { Config } from "../config";
@@ -16,7 +13,8 @@ import {
 } from "../types/token.types";
 
 export class TokenService {
-  private privateKey: Buffer;
+  private privateKey: string;
+  private refreshTokenSecret: string;
 
   /**
    * AccessTokenExpiry  -> In Seconds
@@ -31,17 +29,19 @@ export class TokenService {
     private tokenRepository: Repository<Token>,
     private logger: Logger,
   ) {
-    try {
-      this.privateKey = fs.readFileSync(
-        path.join(__dirname, "../../certs/private.pem"),
-      );
-      // this.publicKey = fs.readFileSync(
-      //   path.join(__dirname, "../../certs/public.pem"),
-      // );
-    } catch {
+    if (!Config.PRIVATE_KEY) {
       logger.error("Failed to read keys");
       process.exit(1);
+      return;
     }
+    this.privateKey = Config.PRIVATE_KEY;
+
+    if (!Config.REFRESH_TOKEN_SECRET) {
+      logger.error("Failed to read keys");
+      process.exit(1);
+      return;
+    }
+    this.refreshTokenSecret = Config.REFRESH_TOKEN_SECRET;
   }
 
   generateAccessToken(payload: AccessTokenPayload) {
@@ -52,34 +52,12 @@ export class TokenService {
     });
   }
 
-  static validateAccessToken(accessToken: string): AccessTokenPayload {
-    const decodedToken = verify(accessToken, "publicKey");
-
-    if (typeof decodedToken === "string") {
-      const err = createHttpError(403, "Invalid access token");
-      throw err;
-    }
-
-    return decodedToken as AccessTokenPayload;
-  }
-
   generateRefreshToken(payload: RefreshTokenPayload) {
-    return sign(payload, Config.REFRESH_TOKEN_SECRET!, {
+    return sign(payload, this.refreshTokenSecret, {
       algorithm: "HS256",
       expiresIn: this.RefreshTokenExpiry,
       issuer: "auth-service",
     });
-  }
-
-  validateRefreshToken(refreshToken: string): RefreshTokenPayload {
-    const decodedToken = verify(refreshToken, Config.REFRESH_TOKEN_SECRET!);
-
-    if (typeof decodedToken === "string") {
-      const err = createHttpError(403, "Invalid refresh token");
-      throw err;
-    }
-
-    return decodedToken as RefreshTokenPayload;
   }
 
   async createRefreshToken({ userId }: CreateRefreshToken) {
