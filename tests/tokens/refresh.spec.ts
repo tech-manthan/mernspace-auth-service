@@ -18,7 +18,7 @@ interface Headers {
 describe("POST /auth/refresh", () => {
   let connection: DataSource;
   let jwks: JWKSMock;
-  let stopJwks: () => void;
+
   let user: User;
   let token: Token;
 
@@ -28,7 +28,7 @@ describe("POST /auth/refresh", () => {
   });
 
   beforeEach(async () => {
-    stopJwks = jwks.start();
+    jwks.start();
     await connection.dropDatabase();
     await connection.synchronize();
 
@@ -56,7 +56,7 @@ describe("POST /auth/refresh", () => {
   });
 
   afterEach(() => {
-    stopJwks();
+    jwks.stop();
   });
 
   afterAll(async () => {

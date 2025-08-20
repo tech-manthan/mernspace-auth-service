@@ -11,7 +11,7 @@ import { Tenant } from "../../src/entity/Tenant";
 describe("POST /tenants", () => {
   let connection: DataSource;
   let jwks: JWKSMock;
-  let stopJwks: () => void;
+
   let adminUser: User;
   let accessToken: string;
 
@@ -22,7 +22,7 @@ describe("POST /tenants", () => {
   });
 
   beforeEach(async () => {
-    stopJwks = jwks.start();
+    jwks.start();
 
     await connection.dropDatabase();
     await connection.synchronize();
@@ -49,7 +49,7 @@ describe("POST /tenants", () => {
   });
 
   afterEach(() => {
-    stopJwks();
+    jwks.stop();
   });
 
   afterAll(async () => {

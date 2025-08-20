@@ -11,7 +11,7 @@ import { Tenant } from "../../src/entity/Tenant";
 describe("PATCH /tenants/:id", () => {
   let connection: DataSource;
   let jwks: JWKSMock;
-  let stopJwks: () => void;
+
   let adminUser: User;
   let accessToken: string;
   let tenant: Tenant;
@@ -23,7 +23,7 @@ describe("PATCH /tenants/:id", () => {
   });
 
   beforeEach(async () => {
-    stopJwks = jwks.start();
+    jwks.start();
 
     await connection.dropDatabase();
     await connection.synchronize();
@@ -56,7 +56,7 @@ describe("PATCH /tenants/:id", () => {
   });
 
   afterEach(() => {
-    stopJwks();
+    jwks.stop();
   });
 
   afterAll(async () => {

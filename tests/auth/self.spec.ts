@@ -11,7 +11,7 @@ import { UserRole } from "../../src/types/user.types";
 describe("GET /auth/self", () => {
   let connection: DataSource;
   let jwks: JWKSMock;
-  let stopJwks: () => void;
+
   let user: User;
 
   beforeAll(async () => {
@@ -20,7 +20,7 @@ describe("GET /auth/self", () => {
   });
 
   beforeEach(async () => {
-    stopJwks = jwks.start();
+    jwks.start();
     await connection.dropDatabase();
     await connection.synchronize();
 
@@ -40,7 +40,7 @@ describe("GET /auth/self", () => {
   });
 
   afterEach(() => {
-    stopJwks();
+    jwks.stop();
   });
 
   afterAll(async () => {

@@ -11,7 +11,7 @@ import { Tenant } from "../../src/entity/Tenant";
 describe("GET /users/:id", () => {
   let connection: DataSource;
   let jwks: JWKSMock;
-  let stopJwks: () => void;
+
   let user: User;
   let tenant: Tenant;
   let admin: User;
@@ -24,7 +24,7 @@ describe("GET /users/:id", () => {
   });
 
   beforeEach(async () => {
-    stopJwks = jwks.start();
+    jwks.start();
 
     await connection.dropDatabase();
     await connection.synchronize();
@@ -70,7 +70,7 @@ describe("GET /users/:id", () => {
   });
 
   afterEach(() => {
-    stopJwks();
+    jwks.stop();
   });
 
   afterAll(async () => {

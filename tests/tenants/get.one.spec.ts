@@ -12,7 +12,7 @@ describe("GET /tenants/:id", () => {
   let connection: DataSource;
   let tenant: Tenant;
   let jwks: JWKSMock;
-  let stopJwks: () => void;
+
   let adminUser: User;
   let accessToken: string;
 
@@ -23,7 +23,7 @@ describe("GET /tenants/:id", () => {
   });
 
   beforeEach(async () => {
-    stopJwks = jwks.start();
+    jwks.start();
 
     await connection.dropDatabase();
     await connection.synchronize();
@@ -58,7 +58,7 @@ describe("GET /tenants/:id", () => {
   });
 
   afterEach(() => {
-    stopJwks();
+    jwks.stop();
   });
 
   afterAll(async () => {

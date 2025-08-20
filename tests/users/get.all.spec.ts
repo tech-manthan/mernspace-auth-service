@@ -10,7 +10,7 @@ import { JWKSMock, createJWKSMock } from "mock-jwks";
 describe("GET /users", () => {
   let connection: DataSource;
   let jwks: JWKSMock;
-  let stopJwks: () => void;
+
   let user: User;
   let accessToken: string;
   beforeAll(async () => {
@@ -20,7 +20,7 @@ describe("GET /users", () => {
   });
 
   beforeEach(async () => {
-    stopJwks = jwks.start();
+    jwks.start();
 
     await connection.dropDatabase();
     await connection.synchronize();
@@ -48,7 +48,7 @@ describe("GET /users", () => {
   });
 
   afterEach(() => {
-    stopJwks();
+    jwks.stop();
   });
 
   afterAll(async () => {

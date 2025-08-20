@@ -13,7 +13,6 @@ describe("DELETE /tenants/:id", () => {
   let adminUser: User;
   let accessToken: string;
   let jwks: JWKSMock;
-  let stopJwks: () => void;
 
   beforeAll(async () => {
     jwks = createJWKSMock("http://localhost:5501");
@@ -22,7 +21,7 @@ describe("DELETE /tenants/:id", () => {
   });
 
   beforeEach(async () => {
-    stopJwks = jwks.start();
+    jwks.start();
 
     await connection.dropDatabase();
     await connection.synchronize();
@@ -59,7 +58,7 @@ describe("DELETE /tenants/:id", () => {
   });
 
   afterEach(() => {
-    stopJwks();
+    jwks.stop();
   });
 
   afterAll(async () => {
