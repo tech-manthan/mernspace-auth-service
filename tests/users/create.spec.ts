@@ -116,6 +116,8 @@ describe("POST /users", () => {
         .set("Cookie", [`accessToken=${accessToken};`])
         .send(userData);
 
+      console.log(response.body);
+
       const userRepository = AppDataSource.getRepository(User);
       const user = await userRepository.findOne({
         where: {
