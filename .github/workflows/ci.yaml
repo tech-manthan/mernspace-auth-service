@@ -12,6 +12,8 @@ jobs:
   build-and-test:
     name: Build the project
     runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: --dns-result-order=ipv4first
     # if: github.event_name == 'pull_request
     steps:
       - uses: actions/checkout@v4
@@ -44,6 +46,7 @@ jobs:
     needs: build-and-test
     runs-on: ubuntu-latest
     env:
+      NODE_OPTIONS: --dns-result-order=ipv4first
       IMAGE_NAME: techmanthan/mernspace_auth_service
       IMAGE_TAG: build-${{ github.run_number }}
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
