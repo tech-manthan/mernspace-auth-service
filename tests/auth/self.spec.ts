@@ -15,7 +15,7 @@ describe("GET /auth/self", () => {
   let user: User;
 
   beforeAll(async () => {
-    jwks = createJWKSMock("http://localhost:5501");
+    jwks = createJWKSMock("http://127.0.0.1:5501/");
     connection = await AppDataSource.initialize();
   });
 
@@ -59,6 +59,7 @@ describe("GET /auth/self", () => {
         .get("/auth/self")
         .set("Cookie", [`accessToken=${accessToken};`])
         .send();
+
       expect(response.statusCode).toBe(200);
     });
 

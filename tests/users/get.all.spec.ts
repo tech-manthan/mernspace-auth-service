@@ -14,7 +14,7 @@ describe("GET /users", () => {
   let user: User;
   let accessToken: string;
   beforeAll(async () => {
-    jwks = createJWKSMock("http://localhost:5501");
+    jwks = createJWKSMock("http://127.0.0.1:5501/");
 
     connection = await AppDataSource.initialize();
   });

@@ -17,7 +17,7 @@ describe("POST /users", () => {
   let tenant: Tenant;
 
   beforeAll(async () => {
-    jwks = createJWKSMock("http://localhost:5501");
+    jwks = createJWKSMock("http://127.0.0.1:5501/");
 
     connection = await AppDataSource.initialize();
   });
