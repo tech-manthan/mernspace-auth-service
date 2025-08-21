@@ -162,8 +162,8 @@ export class TenantController {
       });
 
       const updateRes = await this.tenantService.update(id, {
-        address: address ? address : "",
-        name: name ? name : "",
+        address: address || "",
+        name: name || "",
       });
 
       if (!updateRes.affected || updateRes.affected === 0) {
