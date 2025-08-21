@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import { Config } from "../config";
 
 export class PasswordService {
-  private salt: number | string;
+  private readonly salt: number | string;
   constructor() {
     this.salt = parseInt(Config.SALT || "10") || Config.SALT || 10;
   }
