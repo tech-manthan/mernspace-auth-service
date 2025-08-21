@@ -59,3 +59,10 @@ export interface UserFilter {
   perPage: number;
   role: UserRole;
 }
+
+export interface CreateAdminData {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+}
