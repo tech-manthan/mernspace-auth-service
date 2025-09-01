@@ -33,6 +33,9 @@ export class User {
   @Column({ type: "enum", enum: UserRole, default: UserRole.CUSTOMER })
   role: UserRole;
 
+  @Column({ default: false })
+  isBanned: boolean;
+
   @ManyToOne(() => Tenant, { onDelete: "SET NULL", nullable: true })
   tenant: Tenant | null;
 
