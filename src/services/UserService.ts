@@ -21,6 +21,7 @@ export class UserService {
     password,
     role,
     tenantId,
+    isBanned,
   }: CreateUserData) {
     try {
       return await this.userRepository.save({
@@ -30,6 +31,7 @@ export class UserService {
         password,
         role,
         ...(tenantId !== undefined && { tenant: { id: tenantId } }),
+        ...(isBanned !== undefined && { isBanned: isBanned }),
       });
     } catch {
       const error = createHttpError(
