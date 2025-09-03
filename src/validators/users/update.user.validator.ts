@@ -102,6 +102,15 @@ export default checkSchema(
       },
       toInt: true,
     },
+
+    isBanned: {
+      optional: true,
+      isBoolean: {
+        bail: true,
+        errorMessage: "isBanned should be a boolean",
+      },
+      toBoolean: true,
+    },
   },
 
   ["body"],

@@ -144,21 +144,33 @@ export class UserService {
 
   async update(
     id: number,
-    { email, firstName, lastName, role, tenantId }: UpdateUserData,
+    {
+      email,
+      firstName,
+      lastName,
+      role,
+      tenantId,
+      isBanned,
+      password,
+    }: UpdateUserData,
   ) {
     try {
       const updateData: Partial<UserData> = {};
 
-      if (firstName && firstName !== "") {
+      if (firstName) {
         updateData.firstName = firstName;
       }
 
-      if (lastName && lastName !== "") {
+      if (lastName) {
         updateData.lastName = lastName;
       }
 
-      if (email && email !== "") {
+      if (email) {
         updateData.email = email;
+      }
+
+      if (password) {
+        updateData.password = password;
       }
 
       if (role) {
@@ -171,6 +183,10 @@ export class UserService {
         };
       } else {
         updateData.tenant = null;
+      }
+
+      if (isBanned) {
+        updateData.isBanned = isBanned;
       }
 
       return await this.userRepository.update({ id }, { ...updateData });

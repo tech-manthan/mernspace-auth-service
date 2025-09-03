@@ -7,6 +7,7 @@ export interface CreateUserData {
   password: string;
   role: UserRole;
   tenantId?: number;
+  isBanned?: boolean;
 }
 
 export interface UpdateUserData {
@@ -16,6 +17,7 @@ export interface UpdateUserData {
   password: string | undefined;
   role: UserRole | undefined;
   tenantId: number | undefined;
+  isBanned: boolean | undefined;
 }
 
 export interface UserData {
@@ -27,6 +29,7 @@ export interface UserData {
   tenant: {
     id: number;
   } | null;
+  isBanned: boolean;
 }
 
 export interface CreateUserRequest extends Request {

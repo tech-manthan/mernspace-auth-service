@@ -31,7 +31,8 @@ export class UserController {
         return;
       }
 
-      const { firstName, lastName, email, password, role, tenantId } = req.body;
+      const { firstName, lastName, email, password, role, tenantId, isBanned } =
+        req.body;
 
       if (role === UserRole.CUSTOMER) {
         const err = createHttpError(400, "Customer can't be created by admin");
@@ -67,6 +68,7 @@ export class UserController {
         password: hashedPassword,
         role,
         ...(tenantId !== undefined && { tenantId: tenantId }),
+        ...(isBanned !== undefined && { isBanned: isBanned }),
       });
 
       this.logger.info("User created successfully", {
@@ -204,7 +206,7 @@ export class UserController {
         onlyValidData: true,
       });
 
-      const { email, firstName, lastName, role, password, tenantId } =
+      const { email, firstName, lastName, role, password, tenantId, isBanned } =
         matchedData<UpdateUserData>(req, {
           onlyValidData: true,
         });
@@ -235,6 +237,7 @@ export class UserController {
         password: hashedPassword,
         role,
         tenantId,
+        isBanned,
       });
 
       this.logger.info("User have been updated");
