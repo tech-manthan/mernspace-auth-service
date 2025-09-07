@@ -30,7 +30,10 @@ export class UserService {
         email,
         password,
         role,
-        ...(tenantId !== undefined && { tenant: { id: tenantId } }),
+        ...(tenantId !== undefined && !isNaN(tenantId)
+          ? { tenant: { id: tenantId } }
+          : { tenant: null }),
+
         ...(isBanned !== undefined && { isBanned: isBanned }),
       });
     } catch {
