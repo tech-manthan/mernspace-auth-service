@@ -48,15 +48,6 @@ export class TenantController {
 
   async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const result = validationResult(req);
-
-      if (!result.isEmpty()) {
-        res.status(400).json({
-          errors: result.array(),
-        });
-        return;
-      }
-
       const filter = matchedData<TenantFilter>(req, {
         onlyValidData: true,
       });

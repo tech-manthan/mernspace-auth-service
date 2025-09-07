@@ -87,21 +87,12 @@ export class UserController {
 
   async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const result = validationResult(req);
-
-      if (!result.isEmpty()) {
-        res.status(400).json({
-          errors: result.array(),
-        });
-        return;
-      }
-
       const filter = matchedData<UserFilter>(req, {
         onlyValidData: true,
       });
 
       const [users, count] = await this.userService.getAll(filter);
-      this.logger.info("All Tenants have been fetched");
+      this.logger.info("Users have been fetched");
 
       res.status(200).json({
         currentPage: filter.currentPage,
