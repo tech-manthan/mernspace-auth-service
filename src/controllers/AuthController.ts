@@ -72,9 +72,10 @@ export class AuthController {
       const result = validationResult(req);
 
       if (!result.isEmpty()) {
-        res.status(400).json({
-          errors: result.array(),
-        });
+        // res.status(400).json({
+        //   errors: result.array(),
+        // });
+        next(createHttpError(400, result.array().at(0)?.msg as string));
         return;
       }
 
@@ -133,9 +134,11 @@ export class AuthController {
       const result = validationResult(req);
 
       if (!result.isEmpty()) {
-        res.status(400).json({
-          errors: result.array(),
-        });
+        // res.status(400).json({
+        //   errors: result.array(),
+        // });
+        next(createHttpError(400, result.array().at(0)?.msg as string));
+
         return;
       }
 
