@@ -61,6 +61,7 @@ export interface UserFilter {
   currentPage: number;
   perPage: number;
   role: UserRole;
+  isBanned: boolean;
 }
 
 export interface CreateAdminData {

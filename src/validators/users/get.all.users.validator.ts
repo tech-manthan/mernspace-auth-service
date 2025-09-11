@@ -22,6 +22,20 @@ export default checkSchema(
         errorMessage: `Role must be one of: ${Object.values(UserRole).join(", ")}`,
       },
     },
+    isBanned: {
+      optional: true,
+      customSanitizer: {
+        options: (value: unknown) => {
+          if (value === undefined || value === null || value === "") {
+            return undefined;
+          }
+          return value === "true" || value === true; // string/boolean दोनों handle
+        },
+      },
+      isBoolean: {
+        errorMessage: "isBanned must be true or false",
+      },
+    },
     currentPage: {
       customSanitizer: {
         options: (value: unknown) => {

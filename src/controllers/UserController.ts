@@ -210,6 +210,19 @@ export class UserController {
         return;
       }
 
+      if (email) {
+        const userByEmail = await this.userService.findUserByEmail({ email });
+
+        if (userByEmail) {
+          const err = createHttpError(
+            400,
+            "Email already used , try different email",
+          );
+          next(err);
+          return;
+        }
+      }
+
       if (role === UserRole.CUSTOMER) {
         const err = createHttpError(400, "Customer can't be updated by admin");
         next(err);

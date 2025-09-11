@@ -102,7 +102,7 @@ export class UserService {
     }
   }
 
-  async getAll({ currentPage, perPage, q, role }: UserFilter) {
+  async getAll({ currentPage, perPage, q, role, isBanned }: UserFilter) {
     try {
       const queryBuilder = this.userRepository.createQueryBuilder("user");
 
@@ -120,6 +120,12 @@ export class UserService {
       if (role) {
         queryBuilder.andWhere("user.role = :role", {
           role: role,
+        });
+      }
+
+      if (isBanned === true || isBanned === false) {
+        queryBuilder.andWhere("user.isBanned = :isBanned", {
+          isBanned: isBanned,
         });
       }
 
@@ -190,7 +196,7 @@ export class UserService {
         updateData.tenant = null;
       }
 
-      if (isBanned) {
+      if (isBanned !== undefined) {
         updateData.isBanned = isBanned;
       }
 
