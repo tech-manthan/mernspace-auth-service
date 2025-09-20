@@ -26,6 +26,7 @@ export interface AuthRequest extends Request {
     id: number;
     role: UserRole;
     refreshTokenId: number;
+    tenant: string;
   };
 }
 

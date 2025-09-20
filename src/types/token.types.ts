@@ -4,11 +4,13 @@ import { UserRole } from "./user.types";
 export interface GenerateTokenData {
   id: number;
   role: UserRole;
+  tenant: string;
 }
 
 export interface AccessTokenPayload extends JwtPayload {
   id: number;
   role: UserRole;
+  tenant: string;
 }
 
 export interface RefreshTokenPayload extends JwtPayload {

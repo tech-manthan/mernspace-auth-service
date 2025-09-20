@@ -63,6 +63,9 @@ export class UserService {
           updatedAt: true,
           password: hasPassword,
         },
+        relations: {
+          tenant: true,
+        },
       });
     } catch {
       const error = createHttpError(

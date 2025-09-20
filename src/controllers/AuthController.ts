@@ -23,7 +23,7 @@ export class AuthController {
   ) {}
 
   private async generateAndSetCookies(
-    { id, role }: GenerateTokenData,
+    { id, role, tenant }: GenerateTokenData,
     res: Response,
     isNull: boolean = false,
   ) {
@@ -38,6 +38,7 @@ export class AuthController {
         sub: String(id),
         id: id,
         role: role,
+        tenant,
       });
 
       const createdRefreshToken = await this.tokenService.createRefreshToken({
@@ -111,6 +112,7 @@ export class AuthController {
         {
           id: user.id,
           role: user.role,
+          tenant: user.tenant ? String(user.tenant.id) : "",
         },
         res,
       );
@@ -174,6 +176,7 @@ export class AuthController {
         {
           id: user.id,
           role: user.role,
+          tenant: user.tenant ? String(user.tenant.id) : "",
         },
         res,
       );
@@ -213,7 +216,7 @@ export class AuthController {
 
   async refresh(req: AuthRequest, res: Response, next: NextFunction) {
     try {
-      const { refreshTokenId, id, role } = req.auth;
+      const { refreshTokenId, id, role, tenant } = req.auth;
 
       await this.tokenService.deleteRefreshToken({
         tokenId: refreshTokenId,
@@ -223,6 +226,7 @@ export class AuthController {
         {
           id: id,
           role: role,
+          tenant: tenant,
         },
         res,
       );
@@ -242,7 +246,7 @@ export class AuthController {
 
   async logout(req: AuthRequest, res: Response, next: NextFunction) {
     try {
-      const { refreshTokenId, id, role } = req.auth;
+      const { refreshTokenId, id, role, tenant } = req.auth;
 
       await this.tokenService.deleteRefreshToken({
         tokenId: refreshTokenId,
@@ -252,6 +256,7 @@ export class AuthController {
         {
           id: id,
           role: role,
+          tenant,
         },
         res,
         true,
