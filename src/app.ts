@@ -11,7 +11,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: [Config.MERNSPACE_DASHBOARD_URI!],
+    origin: [Config.MERNSPACE_DASHBOARD_URI!, Config.MERNSPACE_CLIENT_URI!],
     credentials: true,
   }),
 );

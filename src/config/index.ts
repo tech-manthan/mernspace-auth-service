@@ -22,6 +22,7 @@ const {
   ADMIN_FIRSTNAME,
   ADMIN_LASTNAME,
   MERNSPACE_DASHBOARD_URI,
+  MERNSPACE_CLIENT_URI,
 } = process.env;
 
 export const Config = {
@@ -41,4 +42,5 @@ export const Config = {
   ADMIN_FIRSTNAME,
   ADMIN_LASTNAME,
   MERNSPACE_DASHBOARD_URI,
+  MERNSPACE_CLIENT_URI,
 } as const;
